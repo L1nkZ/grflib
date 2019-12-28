@@ -41,6 +41,7 @@
 
 #include <zlib.h>
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 
 GRFEXTERN_BEGIN
@@ -603,111 +604,6 @@ static int GRF_readVer2_info(Grf *grf, GrfError *error, GrfOpenCallback callback
 	*/
 	return 0;
 }
-
-/*! \brief Private function to find unused space in a GRF file
- *
- * \warning This function assumes the files have been sorted with
- *	grf_sort() using GRF_OffsetSort();
- *
- * \param grf GRF file to search for the unused space in
- * \param len Amount of contiguous unused space we need to find before we
- *	return
- * \return The first offset in the GRF in which at least len amount of
- *	unused space was found, or 0 if none was found
- */
-// This function seems unused, at least gcc claims so
-#if 0
-static uint32_t
-GRF_find_unused (Grf *grf, uint32_t len)
-{
-	/* (compiler warnings) uint32_t  i,startAt=GRF_HEADER_FULL_LEN,curAmt; */
-	GrfFile *cur;
-	uint32_t beginEmpty, amtEmpty;
-
-	if ( grf->nfiles == 0 ) {
-		return 0;
-	}
-
-	/* Grab the first file in the linked list */
-	cur = grf->first;
-
-	/* Ignore files that have not been sorted yet */
-	while (cur!=NULL && cur->next!=NULL &&
-	  (cur->flags & GRFFILE_FLAG_FILE) != 0 &&
-	  cur->real_len != 0 &&
-	  cur->pos != 0)
-		cur=cur->next;
-
-	/* Loop through, checking each file's pos against the
-	 * end of the data for the previous file
-	 */
-	while (cur!=NULL && cur->next!=NULL) {
-		beginEmpty=cur->pos+cur->compressed_len_aligned;
-		amtEmpty=cur->next->pos-beginEmpty;
-
-		/* Check if we have enough empty space */
-		if (amtEmpty >= len)
-			return beginEmpty;
-
-		cur=cur->next;
-	}
-
-	/* No fitting space found, tell 'em to append it */
-	return 0;
-
-	/* \todo write an acceptable implementation */
-#if 0
-	/* Space between GRF_HEADER_FULL_LEN and first entry is lost:
-	entries[0..k] sorted, entries [k..j] are 0-pos'd, entries [j..nfiles] sorted
-	*/
-	/* Find first file entry */
-	for(i=0;i<grf->nfiles &&
-		((grf->files[i].type & GRFFILE_FLAG_FILE) == 0 ||
-		grf->files[i].real_len == 0 ||
-		grf->files[i].pos == 0);++i) {
-	}
-#error BAD: .pos modified between calls of function
-		/* Check if there is enough space before the first entry */
-	if (startAt + len <= grf->files[i].pos )
-		return startAt;
-
-	startAt=grf->files[i].pos+grf->files[i].compressed_len_aligned;
-
-	/* Find open spaces between two entries */
-	for(i=0;i<grf->nfiles-1;) {
-		/* Ignore the files with bogus offsets */
-		if ((grf->files[i].type & GRFFILE_FLAG_FILE) != 0 &&
-			grf->files[i].real_len != 0 &&
-			grf->files[i].pos != 0 ) {
-			/* Check if there is enough space, that is to say,
-			 * enough space (len) between the end of previous entry (startAt)
-			 * and the beginning of next (grf->files[i+1].pos).
-			 * Beware of unsigned!
-			 */
-			uint32_t j,next_pos;
-			startAt=grf->files[i].pos+grf->files[i].compressed_len_aligned;
-			/* Find first file entry */
-			for(j=i+1;j<grf->nfiles &&
-				((grf->files[j].type & GRFFILE_FLAG_FILE) == 0 ||
-				grf->files[j].real_len == 0 ||
-				grf->files[j].pos == 0);++j) {
-			}
-			if (startAt + len <= grf->files[j].pos )
-				return startAt;
-
-			/* Find the new startpoint. This is only valid because files are offset-sorted. */
-			startAt=grf->files[j].pos+grf->files[j].compressed_len_aligned;
-			i = j;
-		}
-		else
-		{
-			++i;
-		}
-	}
-#endif  /* 0 */
-}
-#endif /* 0 too */
-
 
 /********************
  * Public Functions *

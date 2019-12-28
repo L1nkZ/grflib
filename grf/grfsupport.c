@@ -30,18 +30,6 @@
 
 GRFEXTERN_BEGIN
 
-
-/***************************
-* Endian support functions *
-***************************/
-/* Pointless:
- * GRFINLINE uint8_t LittleEndian8 (uint8_t *p) { return *p; }
- */
-/* Unused:
- * GRFINLINE uint16_t LittleEndian16 (uint8_t *p) { return p[1]*256 + *p; }
- */
-
-
 /*************************
  * GRF Support Functions *
  *************************/
