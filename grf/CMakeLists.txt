@@ -10,3 +10,4 @@ add_library(grf
     "rgz.c"
 )
 target_include_directories(grf PUBLIC ${GRF_COMMON_INCLUDE_DIRS})
+target_link_libraries(grf PRIVATE grflib::zlib)
