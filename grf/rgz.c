@@ -24,13 +24,14 @@
 /* Include headers needed for RGZ handling */
 #include "rgz.h"
 #include <zlib.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 GRFEXTERN_BEGIN
 
 /* This needs an update, badly */
-#if 0
+
 /*! \brief Open a RGZ file and read its contents, using a callback
  *
  * \param fname Filename of the RGZ file
@@ -140,7 +141,7 @@ GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error, int (*callb
 			curfile->compressed_len=GRFFILE_DIR_SZSMALL;
 			curfile->real_len=GRFFILE_DIR_SZORIG;
 			curfile->pos=GRFFILE_DIR_OFFSET;
-			curfile->type=0;
+			curfile->flags=0;
 
 			break;
 		case RGZ_TYPE_EOF:
@@ -151,7 +152,7 @@ GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error, int (*callb
 			/* Setup the entry information */
 			curfile->compressed_len_aligned=
 			curfile->compressed_len=0;
-			curfile->type=GRFFILE_FLAG_FILE;
+			curfile->flags=GRFFILE_FLAG_FILE;
 			
 			/* Read the file size */
 			if (gzread(rgzfile,name,4)<1) {
@@ -334,7 +335,7 @@ GRFEXPORT void *rgz_index_get (Rgz *rgz, uint32_t index, uint32_t *size, RgzErro
 	rf=&(rgz->files[index]);
 
 	/* Check to see if the file is actually a directory entry */
-	if (!(rf->type & GRFFILE_FLAG_FILE)) {
+	if (!(rf->flags & GRFFILE_FLAG_FILE)) {
 		/*! \todo Create a directory contents listing instead
 		 *	of just returning "<directory>"
 		 */
@@ -399,6 +400,5 @@ GRFEXPORT void *rgz_index_get (Rgz *rgz, uint32_t index, uint32_t *size, RgzErro
 GRFEXPORT void __rgz_free_memory__(void *buf) {
 	free(buf);
 }
-#endif /* 0 */
 
 GRFEXTERN_END

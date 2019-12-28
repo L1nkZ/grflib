@@ -1,3 +1,6 @@
+# Needed for POSIX 'fileno'
+add_definitions(-D_POSIX_C_SOURCE=200809L)
+
 add_library(grf
   STATIC
     "grf.h"
