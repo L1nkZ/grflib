@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 project(grflib LANGUAGES C CXX)
 
 option(GRFLIB_BUILD_EXAMPLES "Build code examples" OFF)
+option(GRFLIB_BUILD_TESTS "Build unit tests" OFF)
 
 set(CMAKE_C_STANDARD 99)
 set(C_STANDARD_REQUIRED ON)

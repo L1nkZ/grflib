@@ -15,3 +15,10 @@ add_library(grf
 target_include_directories(grf PUBLIC ${GRF_COMMON_INCLUDE_DIRS})
 target_link_libraries(grf PRIVATE grflib::zlib)
 add_library(grflib::grf ALIAS grf)
+
+if (GRFLIB_BUILD_TESTS)
+  add_executable(grf_test
+    "grf_test.cc"
+  )
+  target_link_libraries(grf_test PRIVATE grflib::grf gtest gtest_main)
+endif (GRFLIB_BUILD_TESTS)

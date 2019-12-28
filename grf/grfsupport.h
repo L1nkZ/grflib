@@ -54,9 +54,6 @@ GRFEXTERN_BEGIN
 #define GRF_OffsetSort ((int(*)(const void *, const void *))GRF_OffsetSort_Func)
 
 
-/* GRFINLINE uint8_t LittleEndian8 (uint8_t *p); */	/* Pointless */
-/* GRFINLINE uint16_t LittleEndian16 (uint8_t *p); */	/* Unused */
-
 /** Endian support function.
  *
  * Grabs a uint32_t from a 4byte (or more) character array.
