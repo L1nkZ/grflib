@@ -86,7 +86,7 @@
 	#define GRFEXTERN_BEGIN
 	#define GRFEXTERN_END
 	#ifdef __GNUC__
-		#define GRFINLINE inline
+		#define GRFINLINE static inline
 	#else /* __GNUC__ */
 		#define GRFINLINE
 	#endif /* __GNUC__ */
