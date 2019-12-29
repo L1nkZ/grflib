@@ -326,17 +326,6 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error, GrfOpenCallback callback
 		return 1;
 	}
 
-#undef NEVER_DEFINED
-#ifdef NEVER_DEFINED
-	/* GRAVITY has a version check here, even though it is impossible
-	 * to get this far without version being greater than 0xFF and less
-	 * than 0x200
-	 */
-	if (version == 0) {
-		/* We're not dumb, so I won't bother coding here */
-	}
-#endif /* NEVER_DEFINED */
-
 #ifdef GRF_FIXED_KEYSCHEDULE
 	keygen102 = 1;
 	keygen101 = 95001;
@@ -943,16 +932,6 @@ grf_index_get (Grf *grf, uint32_t index, uint32_t *size, GrfError *error)
 		}
 	}
 	*size = zlen;
-
-#undef NEVER_DEFINED
-#ifdef NEVER_DEFINED
-	/* Check for different sizes */
-	if (zlen!=gfile->real_len) {
-		/* Something might be wrong, but I've never
-		 * seen this happen
-		 */
-	}
-#endif /* NEVER_DEFINED */
 
 	/* Throw a nul-terminator on the extra byte we allocated */
 	*(char*)(grf->files[index].data + *size) = 0;
