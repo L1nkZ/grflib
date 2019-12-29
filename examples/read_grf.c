@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     GrfError err = {};
     int ret;
 
-    Grf* p_grf = grf_callback_open(argv[1], "r", &err, NULL);
+    Grf* p_grf = grf_open(argv[1], "rb", &err);
     if (p_grf == NULL) {
         printf("Cannot open GRF file: %s\n", grflib_strerror(err));
         ret = 1;
