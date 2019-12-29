@@ -1,8 +1,7 @@
 # Needed for POSIX 'fileno'
 add_definitions(-D_POSIX_C_SOURCE=200809L)
 
-add_library(grf
-  STATIC
+set(GRFLIB_FILES
     "grf.h"
     "grf.c"
     "grfcrypt.h"
@@ -12,8 +11,23 @@ add_library(grf
     "rgz.h"
     "rgz.c"
 )
+
+if (GRFLIB_BUILD_SHARED_LIBS)
+  add_library(grf
+    SHARED
+      ${GRFLIB_FILES}
+  )
+else (GRFLIB_BUILD_SHARED_LIBS)
+  add_library(grf
+    STATIC
+      ${GRFLIB_FILES}
+  )
+  target_compile_definitions(grf PRIVATE GRFLIB_STATIC)
+endif (GRFLIB_BUILD_SHARED_LIBS)
+
 target_include_directories(grf PUBLIC ${GRF_COMMON_INCLUDE_DIRS})
 target_link_libraries(grf PRIVATE grflib::zlib)
+
 add_library(grflib::grf ALIAS grf)
 
 if (GRFLIB_BUILD_TESTS)

@@ -98,15 +98,15 @@ extern "C" {
 	/* Pack to 1 byte boundaries */
 	#include <pshpack1.h>
 
-	#ifndef GRF_STATIC
+	#ifndef GRFLIB_STATIC
 		#ifdef GRF_BUILDING
 			#define GRFEXPORT __declspec(dllexport)
 		#else /* GRF_BUILDING */
 			#define GRFEXPORT __declspec(dllimport)
 		#endif /* GRF_BUILDING */
-	#else /* GRF_STATIC */
+	#else /* GRFLIB_STATIC */
 		#define GRFEXPORT
-	#endif /* GRF_STATIC */
+	#endif /* GRFLIB_STATIC */
 #else /* WIN32 */
 	/* Integer types */
 	#include <inttypes.h>
