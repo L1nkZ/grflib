@@ -1,4 +1,4 @@
-set(BUILD_GMOCK "Builds the googlemock subproject" OFF)
-set(INSTALL_GTEST "Enable installation of googletest. (Projects embedding googletest may want to turn this OFF.)" OFF)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("googletest" EXCLUDE_FROM_ALL)
