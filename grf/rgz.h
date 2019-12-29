@@ -28,8 +28,9 @@
 
 #include "grf.h"
 
-GRFEXTERN_BEGIN
-
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 /*! \brief Value to distinguish a RGZ file in Grf::type */
 # define GRF_TYPE_RGZ	0x02
@@ -82,7 +83,9 @@ GRFEXPORT int rgz_index_extract (Rgz *rgz, uint32_t index, const char *file, Rgz
 GRFEXPORT void __rgz_free_memory__(void *buf);
 
 
-GRFEXTERN_END
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 
 #endif /* !defined(__RGZ_H__) */

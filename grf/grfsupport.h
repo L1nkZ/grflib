@@ -30,11 +30,9 @@
 
 #include "grftypes.h"
 
-/* Comment this before final release */
-/* #define GRF_DEBUG 1 */
-
-GRFEXTERN_BEGIN
-
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 #ifdef WIN32
 	/* Windows function names are so... ugghhhh */
@@ -123,6 +121,8 @@ GRFEXPORT const char *grflib_strerror(GrfError err);
 #define GRF_SETERR_2(err,type,func,extra) GRF_SETERR_ADD(err,type,func,extra)
 
 
-GRFEXTERN_END
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* !defined(__GRFSUPPORT_H__) */

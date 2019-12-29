@@ -28,8 +28,6 @@
 #include <string.h>		/* strerror, strcoll */
 #include <zlib.h>		/* gzerror */
 
-GRFEXTERN_BEGIN
-
 /*************************
  * GRF Support Functions *
  *************************/
@@ -391,6 +389,3 @@ grflib_strerror(GrfError err)
 
 	return errbuf;
 }
-
-
-GRFEXTERN_END

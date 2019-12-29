@@ -38,6 +38,9 @@
 #include <sys/types.h>
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 /*******************************************************
  * Portability macros
@@ -47,17 +50,6 @@
  * different platforms/compilers. Scroll down for the
  * real GRF stuff.
  *******************************************************/
-
-
-/** @def GRFEXTERN_BEGIN
- * Internally used macro which marks the beginning of C
- * function and data type definitions. Used for C++ safety.
- */
-
-/** @def GRFEXTERN_END
- * Internally used macro which marks the beginning of C
- * function and data type definitions. Used for C++ safety.
- */
 
 /** @def GRFINLINE
  * Internally used macro which marks a function as an inline function.
@@ -75,26 +67,18 @@
 
 /* C++ safety stuff */
 #ifdef __cplusplus
-	#define GRFEXTERN_BEGIN extern "C" {
-	#define GRFEXTERN_END }
 	#ifdef __GNUC__
 		#define GRFINLINE inline
 	#else /* __GNUC__ */
 		#define GRFINLINE
 	#endif /* __GNUC__ */
 #else
-	#define GRFEXTERN_BEGIN
-	#define GRFEXTERN_END
 	#ifdef __GNUC__
 		#define GRFINLINE static inline
 	#else /* __GNUC__ */
 		#define GRFINLINE
 	#endif /* __GNUC__ */
 #endif /* __cplusplus */
-
-
-/* Make use of C++ safety right away :) */
-GRFEXTERN_BEGIN
 
 /* Win32 DLL macros */
 #ifdef WIN32
@@ -345,6 +329,8 @@ typedef struct {
 	#pragma pack()
 #endif /* WIN32 */
 
-GRFEXTERN_END
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* __GRFTYPES_H__ */

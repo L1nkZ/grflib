@@ -44,8 +44,6 @@
 #include <strings.h>
 #include <stdlib.h>
 
-GRFEXTERN_BEGIN
-
 #ifdef _WIN32
 #define ftell _ftelli64
 #define fseek _fseeki64
@@ -1589,6 +1587,3 @@ grf_repak(const char *grf, const char *tmpgrf, GrfError *error)
 	GRF_SETERR(error,GE_NOTIMPLEMENTED,grf_repak);
 	return 0;
 }
-
-
-GRFEXTERN_END

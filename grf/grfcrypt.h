@@ -44,8 +44,9 @@
 
 #include "grftypes.h"
 
-GRFEXTERN_BEGIN
-
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 /* Encryption direction */
 
@@ -69,7 +70,8 @@ char *GRF_Process(char *dst, const char *src, uint32_t len, uint8_t flags, uint3
 /* Function to process data with the GRFFILE_FLAG_MIXCRYPT flag set */
 char *GRF_MixedProcess(char *dst, const char *src, uint32_t len, uint8_t digits, const char *ks, uint8_t dir);
 
-
-GRFEXTERN_END
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* !defined(__GRFCRYPT_H__) */

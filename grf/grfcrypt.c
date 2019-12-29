@@ -25,9 +25,6 @@
 #include "grfcrypt.h"
 #include <string.h>
 
-GRFEXTERN_BEGIN
-
-
 /* DEFINEs to point to various tables */
 #define DES_IP		tables0x40[0]		/** Initial Permutation (IP) */
 #define DES_IP_INV	tables0x40[1]		/** Final Permutatioin (IP^-1) */
@@ -627,5 +624,3 @@ GRF_MixedProcess(char *dst, const char *src, uint32_t len, uint8_t cycle, const 
 
 	return orig;
 }
-
-GRFEXTERN_END

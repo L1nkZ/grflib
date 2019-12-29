@@ -28,8 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-GRFEXTERN_BEGIN
-
 /* This needs an update, badly */
 
 /*! \brief Open a RGZ file and read its contents, using a callback
@@ -400,5 +398,3 @@ GRFEXPORT void *rgz_index_get (Rgz *rgz, uint32_t index, uint32_t *size, RgzErro
 GRFEXPORT void __rgz_free_memory__(void *buf) {
 	free(buf);
 }
-
-GRFEXTERN_END

@@ -37,7 +37,9 @@
 #include "grftypes.h"
 #include "grfsupport.h"
 
-GRFEXTERN_BEGIN
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 #ifdef WORK_AROUND_DOXYGEN_BUG
 static int foo;
@@ -104,6 +106,8 @@ GRFEXPORT void grf_free(Grf *grf);
  */
 
 
-GRFEXTERN_END
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* __GRF_H__ */
