@@ -1,3 +1,4 @@
+#pragma once
 /*
  *  libgrf
  *  grfcrypt.h - provides encryption routines used inside GRF files
@@ -39,9 +40,6 @@
  * external applications.
  */
 
-#ifndef __GRFCRYPT_H__
-#define __GRFCRYPT_H__
-
 #include "grftypes.h"
 
 #ifdef __cplusplus
@@ -73,5 +71,3 @@ char *GRF_MixedProcess(char *dst, const char *src, uint32_t len, uint8_t digits,
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
-#endif /* !defined(__GRFCRYPT_H__) */

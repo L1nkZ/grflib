@@ -1,3 +1,4 @@
+#pragma once
 /*
  *  libgrf
  *  grf.h - read and manipulate GRF/GPF files
@@ -31,19 +32,12 @@
  * Reading and writing .GRF archives.
  */
 
-#ifndef __GRF_H__
-#define __GRF_H__
-
 #include "grftypes.h"
 #include "grfsupport.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
-
-#ifdef WORK_AROUND_DOXYGEN_BUG
-static int foo;
-#endif /* WORK_AROUND_DOXYGEN_BUG */
 
 
 /** Callback prototype of a function called for each file entry when opening a GRF file.
@@ -109,5 +103,3 @@ GRFEXPORT void grf_free(Grf *grf);
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
-#endif /* __GRF_H__ */

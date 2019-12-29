@@ -1,3 +1,4 @@
+#pragma once
 /*
  *  libgrf
  *  rgz.h - library functions to manipulate RGZ files
@@ -22,9 +23,6 @@
  *
  * Reading .RGZ archives.
  */
-
-#ifndef __RGZ_H__
-#define __RGZ_H__
 
 #include "grf.h"
 
@@ -86,6 +84,3 @@ GRFEXPORT void __rgz_free_memory__(void *buf);
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
-
-#endif /* !defined(__RGZ_H__) */

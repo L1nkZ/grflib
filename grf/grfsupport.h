@@ -1,3 +1,4 @@
+#pragma once
 /*
  *  libgrf
  *  grfsupport.h - commonly used functions
@@ -24,9 +25,6 @@
  *
  * Various utility functions, to be used in combination with grf.h
  */
-
-#ifndef __GRFSUPPORT_H__
-#define __GRFSUPPORT_H__
 
 #include "grftypes.h"
 
@@ -124,5 +122,3 @@ GRFEXPORT const char *grflib_strerror(GrfError err);
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
-#endif /* !defined(__GRFSUPPORT_H__) */

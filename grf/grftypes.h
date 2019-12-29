@@ -1,3 +1,4 @@
+#pragma once
 /*
  *  libgrf
  *  grftypes.h - types and structure definitions shared between different
@@ -30,10 +31,6 @@
  * but should be adaptable to other archive types as well. RGZ handling uses
  * certain Grf functions, so it uses the same structures as well.
  */
-
-
-#ifndef __GRFTYPES_H__
-#define __GRFTYPES_H__
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -332,5 +329,3 @@ typedef struct {
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
-#endif /* __GRFTYPES_H__ */
