@@ -35,10 +35,6 @@
 #include <sys/types.h>
 #include <stdio.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 /*******************************************************
  * Portability macros
  *
@@ -62,7 +58,7 @@ extern "C" {
  */
 
 
-/* C++ safety stuff */
+/* C++ stuff */
 #ifdef __cplusplus
 	#ifdef __GNUC__
 		#define GRFINLINE inline
@@ -124,12 +120,13 @@ extern "C" {
 	#define NULL ((void *) 0)
 #endif
 
-
-
 /*******************************
  * Real GRF stuff begins here
  *******************************/
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 /** Maximum length of filenames.
  * @note GRAVITY uses 0x100 as a length for filenames.

@@ -28,10 +28,6 @@
 
 #include "grftypes.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 #ifdef WIN32
 	/* Windows function names are so... ugghhhh */
 	#define strcasecmp(a,b) _stricmp(a,b)
@@ -49,6 +45,9 @@ extern "C" {
 #define GRF_AlphaSort ((int(*)(const void *, const void *))grflib_alpha_sort_func)
 #define GRF_OffsetSort ((int(*)(const void *, const void *))grflib_offset_sort_func)
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 /** Endian support function.
  *
@@ -94,9 +93,6 @@ GRFEXPORT int grflib_offset_sort_func(const GrfFile *g1, const GrfFile *g2);
 
 GRFEXPORT GrfFile *grf_find (Grf *grf, const char *fname, uint32_t *index);
 GRFEXPORT uint32_t grf_find_unused (Grf *grf, uint32_t len);
-
-int grf_list_from_array(Grf *grf, GrfError *error);
-int grf_array_from_list(Grf *grf, GrfError *error);
 
 GRFEXPORT GrfError *grflib_set_error(GrfError *err, GrfErrorType errtype, uint32_t line, const char *file, const char *func, void *extra);
 GRFEXPORT const char *grflib_strerror(GrfError err);

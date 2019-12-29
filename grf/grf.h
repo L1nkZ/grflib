@@ -35,11 +35,6 @@
 #include "grftypes.h"
 #include "grfsupport.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
-
 /** Callback prototype of a function called for each file entry when opening a GRF file.
  *
  * It should return -1 if there has been an error.
@@ -62,6 +57,9 @@ typedef int (*GrfOpenCallback) (GrfFile *file, GrfError *error);
 /** @brief The same as grf_callback_open(), but without a callback parameter. Kept for compatibility with libgrf 0.9. */
 # define grf_open(fname, mode, error) grf_callback_open(fname, mode, error, NULL)
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 /* Opening */
 GRFEXPORT Grf *grf_callback_open (const char *fname, const char *mode, GrfError *error, GrfOpenCallback callback);

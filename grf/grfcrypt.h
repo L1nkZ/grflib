@@ -40,12 +40,6 @@
  * external applications.
  */
 
-#include "grftypes.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 /* Encryption direction */
 
 /** Encryption processing.
@@ -55,6 +49,9 @@ extern "C" {
  * Used to tell grfcrypt.c's functions to decrypt rather than encrypt. */
 #define GRFCRYPT_DECRYPT	0x01
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 /* DES function to create a key schedule. */
 char *DES_CreateKeySchedule(char *ks, const char *key);

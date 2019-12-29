@@ -26,10 +26,6 @@
 
 #include "grf.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 /*! \brief Value to distinguish a RGZ file in Grf::type */
 # define GRF_TYPE_RGZ	0x02
 
@@ -71,6 +67,10 @@ extern "C" {
 
 /*! \brief Macro to open a file without a callback function */
 # define rgz_open(fname,error) rgz_callback_open(fname,error,NULL)
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 GRFEXPORT Rgz *rgz_callback_open (const char *fname, RgzError *error, int (*entryInfoFunc)(RgzFile*,RgzError*));
 GRFEXPORT void *rgz_get (Rgz *rgz, const char *fname, uint32_t *size, RgzError *error);
