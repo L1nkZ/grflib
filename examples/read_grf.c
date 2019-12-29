@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 
     Grf* p_grf = grf_callback_open(argv[1], "r", &err, NULL);
     if (p_grf == NULL) {
-        printf("Cannot open GRF file: %s\n", grf_strerror(err));
+        printf("Cannot open GRF file: %s\n", grflib_strerror(err));
         ret = 1;
         goto cleanup;
     }

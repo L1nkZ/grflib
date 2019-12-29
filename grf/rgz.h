@@ -57,8 +57,8 @@ GRFEXTERN_BEGIN
 # define rgz_sort grf_sort
 /*! \brief Another name for rgz_strerror */
 # define rgz_strerror grf_strerror
-/*! \brief Another name for GRF_NameHash */
-# define RGZ_NameHash GRF_NameHash
+/*! \brief Another name for grflib_hash_name */
+# define RGZ_NameHash grflib_hash_name
 /*! \brief Another name for GRF_AlphaSort */
 # define RGZ_AlphaSort GRF_AlphaSort
 /*! \brief Another name for GRF_OffsetSort */

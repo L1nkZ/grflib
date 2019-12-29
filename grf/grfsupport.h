@@ -50,8 +50,8 @@ GRFEXTERN_BEGIN
 	#endif /* defined(_MSC_VER) */
 #endif /* defined(WIN32) */
 
-/* #define GRF_AlphaSort ((int(*)(const void *, const void *))GRF_AlphaSort_Func) */
-#define GRF_OffsetSort ((int(*)(const void *, const void *))GRF_OffsetSort_Func)
+#define GRF_AlphaSort ((int(*)(const void *, const void *))grflib_alpha_sort_func)
+#define GRF_OffsetSort ((int(*)(const void *, const void *))grflib_offset_sort_func)
 
 
 /** Endian support function.
@@ -89,28 +89,28 @@ ToLittleEndian32(uint32_t hi)
 	return lei;
 }
 
-GRFEXPORT char *GRF_normalize_path(char *out, const char *in);
-GRFEXPORT uint32_t GRF_NameHash(const char *name);
+GRFEXPORT char *grflib_normalize_path(char *out, const char *in);
+GRFEXPORT uint32_t grflib_hash_name(const char *name);
 
 GRFEXPORT void grf_sort (Grf *grf, int(*compar)(const void *, const void *));
-GRFEXPORT int GRF_AlphaSort_Func(const GrfFile *g1, const GrfFile *g2);
-GRFEXPORT int GRF_OffsetSort_Func(const GrfFile *g1, const GrfFile *g2);
+GRFEXPORT int grflib_alpha_sort_func(const GrfFile *g1, const GrfFile *g2);
+GRFEXPORT int grflib_offset_sort_func(const GrfFile *g1, const GrfFile *g2);
 
 GRFEXPORT GrfFile *grf_find (Grf *grf, const char *fname, uint32_t *index);
 GRFEXPORT uint32_t grf_find_unused (Grf *grf, uint32_t len);
 
-int GRF_list_from_array(Grf *grf, GrfError *error);
-int GRF_array_from_list(Grf *grf, GrfError *error);
+int grf_list_from_array(Grf *grf, GrfError *error);
+int grf_array_from_list(Grf *grf, GrfError *error);
 
-GRFEXPORT GrfError *GRF_SetError(GrfError *err, GrfErrorType errtype, uint32_t line, const char *file, const char *func, void *extra);
-GRFEXPORT const char *grf_strerror(GrfError err);
+GRFEXPORT GrfError *grflib_set_error(GrfError *err, GrfErrorType errtype, uint32_t line, const char *file, const char *func, void *extra);
+GRFEXPORT const char *grflib_strerror(GrfError err);
 
 /*! \brief Macro used internally
  *
  * \sa GRF_SETERR
  * \sa GRF_SETERR_2
  */
-#define GRF_SETERR_ADD(a,b,e,f) GRF_SetError(a,b,__LINE__,__FILE__,#e,(grf_uintptr_t*)f)    /* NOTE: ? => grf_uintptr_t* conversion */
+#define GRF_SETERR_ADD(a,b,e,f) grflib_set_error(a,b,__LINE__,__FILE__,#e,(grf_uintptr_t*)f)    /* NOTE: ? => grf_uintptr_t* conversion */
 /*! \brief Simplification Macro
  *
  * Simplifies setting an error to a GrfError pointer

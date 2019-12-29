@@ -430,7 +430,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error, GrfOpenCallback callback
 		grf->files[i].real_len=LittleEndian32((uint8_t*)buf+offset+8);
 		grf->files[i].flags=*(uint8_t*)(buf+offset+0xC);
 		grf->files[i].pos=LittleEndian32((uint8_t*)buf+offset+0xD)+GRF_HEADER_FULL_LEN;
-		grf->files[i].hash=GRF_NameHash(grf->files[i].name);
+		grf->files[i].hash=grflib_hash_name(grf->files[i].name);
 
 		/* Check if the file is a special file */
 		if (GRF_CheckExt(grf->files[i].name,specialExts))
@@ -566,7 +566,7 @@ static int GRF_readVer2_info(Grf *grf, GrfError *error, GrfOpenCallback callback
 		grf->files[i].real_len=LittleEndian32((uint8_t*)buf+offset+8);
 		grf->files[i].flags=*(uint8_t*)(buf+offset+0xC);
 		grf->files[i].pos=LittleEndian32((uint8_t*)buf+offset+0xD)+GRF_HEADER_FULL_LEN;
-		grf->files[i].hash=GRF_NameHash(grf->files[i].name);
+		grf->files[i].hash=grflib_hash_name(grf->files[i].name);
 
 		/* Advance to the next file */
 		offset+=0x11;
@@ -1213,7 +1213,7 @@ grf_index_extract (Grf *grf, uint32_t index, const char *file, GrfError *error)
 		GRF_SETERR (error, GE_ERRNO, malloc);
 		return 0;
 	}
-	GRF_normalize_path (fixedname,file);
+	grflib_normalize_path (fixedname,file);
 
 	/* Read the data */
 	if ((buf = grf_index_get (grf, index, &size, error)) == NULL) {
@@ -1505,7 +1505,7 @@ grf_put(Grf *grf, const char *name, const void *data, uint32_t len, uint8_t flag
 
 	/* Set filename */
 	memcpy(grf->files[grf->nfiles].name,name,namelen);
-	grf->files[grf->nfiles].hash=GRF_NameHash(name);
+	grf->files[grf->nfiles].hash=grflib_hash_name(name);
 
 	/* This may be reverted if there's an error */
 	++grf->nfiles;

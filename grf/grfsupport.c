@@ -48,7 +48,7 @@ GRFEXTERN_BEGIN
  * @return A duplicate pointer to the normalized data
  */
 GRFEXPORT char *
-GRF_normalize_path(char *out, const char *in)
+grflib_normalize_path(char *out, const char *in)
 {
 	char *orig;
 
@@ -69,7 +69,7 @@ GRF_normalize_path(char *out, const char *in)
  * @return The value of the hashed filename
  */
 GRFEXPORT uint32_t
-GRF_NameHash(const char *name)
+grflib_hash_name(const char *name)
 {
 	size_t i;
 	uint32_t tmp;
@@ -102,7 +102,7 @@ grf_find(Grf *grf, const char *fname, uint32_t *index)
 	}
 
 	/* For speed, grab the filename hash */
-	j = GRF_NameHash(fname);
+	j = grflib_hash_name(fname);
 	for (i = 0; i < grf->nfiles; i++)
 		/* Check 4 bytes against each other instead of
 		 * a multi-character name
@@ -148,7 +148,7 @@ grf_sort(Grf *grf, int(*compar)(const void *, const void *))
  *	g2 should be before g1
  */
 GRFEXPORT int
-GRF_AlphaSort_Func(const GrfFile *g1, const GrfFile *g2)
+grflib_alpha_sort_func(const GrfFile *g1, const GrfFile *g2)
 {
 	return strcoll(g1->name, g2->name);
 }
@@ -162,7 +162,7 @@ GRF_AlphaSort_Func(const GrfFile *g1, const GrfFile *g2)
  *	g2 should be before g1
  */
 GRFEXPORT int
-GRF_OffsetSort_Func(const GrfFile *g1, const GrfFile *g2)
+grflib_offset_sort_func(const GrfFile *g1, const GrfFile *g2)
 {
 	/* Check their offsets */
 	if (g1->pos>g2->pos)
@@ -179,12 +179,12 @@ GRF_OffsetSort_Func(const GrfFile *g1, const GrfFile *g2)
  * @return 1 on success, 0 on fail
  */
 int
-GRF_list_from_array(Grf *grf, GrfError *error)
+grf_list_from_array(Grf *grf, GrfError *error)
 {
 	uint32_t i;
 
 	if (!grf) {
-		GRF_SETERR(error,GE_BADARGS,GRF_list_from_array);
+		GRF_SETERR(error,GE_BADARGS,grf_list_from_array);
 		return 0;
 	}
 	
@@ -205,7 +205,7 @@ GRF_list_from_array(Grf *grf, GrfError *error)
 	grf->first=&(grf->files[0]);
 	grf->last=&(grf->files[grf->nfiles-1]);
 
-	GRF_SETERR(error,GE_SUCCESS,GRF_list_from_array);
+	GRF_SETERR(error,GE_SUCCESS,grf_list_from_array);
 	return 1;
 }
 
@@ -215,14 +215,14 @@ GRF_list_from_array(Grf *grf, GrfError *error)
  * @return 1 on success, 0 on fail
  */
 int
-GRF_array_from_list(Grf *grf, GrfError *error)
+grf_array_from_list(Grf *grf, GrfError *error)
 {
 	GrfFile *newfiles, *cur;
 	uint32_t i;
 
 	/* Check our arguments */
 	if (!grf) {
-		GRF_SETERR(error, GE_BADARGS, GRF_array_from_list);
+		GRF_SETERR(error, GE_BADARGS, grf_array_from_list);
 		return 0;
 	}
 
@@ -245,7 +245,7 @@ GRF_array_from_list(Grf *grf, GrfError *error)
 	/* Set new files */
 	grf->files = newfiles;
 
-	GRF_SETERR(error, GE_SUCCESS, GRF_array_from_list);
+	GRF_SETERR(error, GE_SUCCESS, grf_array_from_list);
 	return 1;
 }
 
@@ -272,7 +272,7 @@ GRF_array_from_list(Grf *grf, GrfError *error)
  *		ones spit out by zlib's gzip functions
  * @return A duplicate of the err pointer
  */
-GRFEXPORT GrfError *GRF_SetError(GrfError *err, GrfErrorType errtype, uint32_t line, const char *file, const char *func, void *extra) {
+GRFEXPORT GrfError *grflib_set_error(GrfError *err, GrfErrorType errtype, uint32_t line, const char *file, const char *func, void *extra) {
 	if (err) {
 		/* Set the error informations */
 		err->type = errtype;
@@ -365,7 +365,7 @@ GRF_strerror_zlib(int error)
  * @return A human-readable string, which must not be freed.
  */
 GRFEXPORT const char *
-grf_strerror(GrfError err)
+grflib_strerror(GrfError err)
 {
 	static char errbuf[0x1000];
 	const char *tmpbuf;
