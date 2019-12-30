@@ -40,6 +40,7 @@ void EmptyGrfOpenTest(const std::string &grf_path) {
     GrfError err{};
     Grf *p_grf = grf_open(grf_path.c_str(), "rb", &err);
     ASSERT_NE(nullptr, p_grf);
+    EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
     EXPECT_EQ(0, p_grf->nfiles);
     grf_close(p_grf);
 }
@@ -48,6 +49,7 @@ void SmallGrfOpenTest(const std::string &grf_path) {
     GrfError err{};
     Grf *p_grf = grf_open(grf_path.c_str(), "rb", &err);
     ASSERT_NE(nullptr, p_grf);
+    EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
     EXPECT_EQ(8, p_grf->nfiles);
     grf_close(p_grf);
 }
@@ -94,6 +96,8 @@ TEST_F(GrfTest, GpfOpen) {
         GrfError err{};
         Grf *p_grf = grf_open(gpf_path.c_str(), "rb", &err);
         ASSERT_NE(nullptr, p_grf);
+        // GPF is actually the same file format as GRF for this version
+        EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
         EXPECT_EQ(4, p_grf->nfiles);
         grf_close(p_grf);
     }
@@ -103,6 +107,8 @@ TEST_F(GrfTest, GpfOpen) {
         GrfError err{};
         Grf *p_grf = grf_open(gpf_path.c_str(), "rb", &err);
         ASSERT_NE(nullptr, p_grf);
+        // GPF is actually the same file format as GRF for this version
+        EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
         EXPECT_EQ(89, p_grf->nfiles);
         grf_close(p_grf);
     }
