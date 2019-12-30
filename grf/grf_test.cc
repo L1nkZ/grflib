@@ -54,36 +54,56 @@ void SmallGrfOpenTest(const std::string &grf_path) {
 
 TEST_F(GrfTest, GrfOpen102) {
     {
-        const std::string empty102 = test_data_path_ + "/empty/102.grf";
+        const std::string empty102 = test_data_path_ + "/grf/102-empty.grf";
         EmptyGrfOpenTest(empty102);
     }
 
     {
-        const std::string small102 = test_data_path_ + "/small/102.grf";
+        const std::string small102 = test_data_path_ + "/grf/102-small.grf";
         SmallGrfOpenTest(small102);
     }
 }
 
 TEST_F(GrfTest, GrfOpen103) {
     {
-        const std::string empty103 = test_data_path_ + "/empty/103.grf";
+        const std::string empty103 = test_data_path_ + "/grf/103-empty.grf";
         EmptyGrfOpenTest(empty103);
     }
 
     {
-        const std::string small103 = test_data_path_ + "/small/103.grf";
+        const std::string small103 = test_data_path_ + "/grf/103-small.grf";
         SmallGrfOpenTest(small103);
     }
 }
 
 TEST_F(GrfTest, GrfOpen200) {
     {
-        const std::string empty200 = test_data_path_ + "/empty/200.grf";
+        const std::string empty200 = test_data_path_ + "/grf/200-empty.grf";
         EmptyGrfOpenTest(empty200);
     }
 
     {
-        const std::string small200 = test_data_path_ + "/small/200.grf";
+        const std::string small200 = test_data_path_ + "/grf/200-small.grf";
         SmallGrfOpenTest(small200);
+    }
+}
+
+TEST_F(GrfTest, GpfOpen) {
+    {
+        const std::string gpf_path = test_data_path_ + "/gpf/102-small.gpf";
+        GrfError err{};
+        Grf *p_grf = grf_open(gpf_path.c_str(), "rb", &err);
+        ASSERT_NE(nullptr, p_grf);
+        EXPECT_EQ(4, p_grf->nfiles);
+        grf_close(p_grf);
+    }
+
+    {
+        const std::string gpf_path = test_data_path_ + "/gpf/103-small.gpf";
+        GrfError err{};
+        Grf *p_grf = grf_open(gpf_path.c_str(), "rb", &err);
+        ASSERT_NE(nullptr, p_grf);
+        EXPECT_EQ(89, p_grf->nfiles);
+        grf_close(p_grf);
     }
 }
