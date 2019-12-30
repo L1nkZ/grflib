@@ -33,8 +33,8 @@
  * Reading and writing .GRF archives.
  */
 
-#include "grfsupport.h"
-#include "grftypes.h"
+#include "grf/grfsupport.h"
+#include "grf/grftypes.h"
 
 /** Callback prototype of a function called for each file entry when opening a
  * GRF file.

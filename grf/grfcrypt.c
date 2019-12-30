@@ -21,9 +21,10 @@
  * See grfcrypt.h for information about encryption related GRF_FLAG_*s
  */
 
-#include "grfcrypt.h"
-#include "grftypes.h"
 #include <string.h>
+
+#include "grf/grfcrypt.h"
+#include "grf/grftypes.h"
 
 /* DEFINEs to point to various tables */
 #define DES_IP tables0x40[0]           /** Initial Permutation (IP) */

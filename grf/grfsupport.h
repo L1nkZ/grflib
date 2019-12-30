@@ -26,7 +26,7 @@
  * Various utility functions, to be used in combination with grf.h
  */
 
-#include "grftypes.h"
+#include "grf/grftypes.h"
 
 #ifdef WIN32
 /* Windows function names are so... ugghhhh */

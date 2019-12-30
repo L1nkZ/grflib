@@ -34,14 +34,14 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "grf.h"
-#include "grfcrypt.h"
-#include "grfsupport.h"
-#include "grftypes.h"
-
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+
+#include "grf/grf.h"
+#include "grf/grfcrypt.h"
+#include "grf/grfsupport.h"
+#include "grf/grftypes.h"
 #include <zlib.h>
 
 #ifdef _WIN32

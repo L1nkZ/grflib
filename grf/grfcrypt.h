@@ -40,6 +40,8 @@
  * external applications.
  */
 
+#include <stdint.h>
+
 /* Encryption direction */
 
 /** Encryption processing.

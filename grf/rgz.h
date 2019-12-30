@@ -24,7 +24,7 @@
  * Reading .RGZ archives.
  */
 
-#include "grf.h"
+#include "grf/grf.h"
 
 /*! \brief Value to distinguish a RGZ file in Grf::type */
 #define GRF_TYPE_RGZ 0x02

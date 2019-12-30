@@ -22,10 +22,11 @@
  */
 
 /* Include headers needed for RGZ handling */
-#include "rgz.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "grf/rgz.h"
 #include <zlib.h>
 
 /* This needs an update, badly */

@@ -20,13 +20,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "grfsupport.h"
-#include "grftypes.h"
 
 #include <errno.h>  /* errno */
 #include <stdlib.h> /* snprintf, free */
 #include <string.h> /* strerror, strcoll */
-#include <zlib.h>   /* gzerror */
+
+#include "grf/grfsupport.h"
+#include "grf/grftypes.h"
+#include <zlib.h> /* gzerror */
 
 /*************************
  * GRF Support Functions *
