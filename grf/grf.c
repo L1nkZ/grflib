@@ -260,8 +260,7 @@ static char *GRF_GenerateDataKey(char *key, const char *src) {
 static int GRF_readVer1_info(Grf *grf, GrfError *error,
                              GrfOpenCallback callback) {
     int callbackRet;
-    uint32_t i, len2;
-    int64_t offset, len;
+    int64_t offset;
     char namebuf[GRF_NAMELEN], keyschedule[0x80], *buf;
 
 #ifdef GRF_FIXED_KEYSCHEDULE
@@ -287,10 +286,11 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
     offset = ftell(grf->f);
 
     /* Grab the length of the table */
-    len = (grf->len) - offset;
+    size_t len = (size_t)((grf->len) - offset);
 
     /* Allocate memory for, and grab the table */
-    if ((buf = (char *)malloc(len)) == NULL) {
+    buf = (char *)malloc(len);
+    if (buf == NULL) {
         GRF_SETERR(error, GE_ERRNO, malloc);
         return 1;
     }
@@ -318,10 +318,10 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 #endif /* GRF_FIXED_KEYSCHEDULE */
 
     /* Read information about each file */
-    for (i = offset = 0; i < grf->nfiles; i++
+    for (uint32_t i = offset = 0; i < grf->nfiles; i++
 #ifdef GRF_FIXED_KEYSCHEDULE
-                                          ,
-        keygen102 += 5, keygen101 -= 2
+                                                   ,
+                  keygen102 += 5, keygen101 -= 2
 #endif /* GRF_FIXED_KEYSCHEDULE */
     ) {
         /* Get the name length */
@@ -331,8 +331,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
         /* Decide how to decode the name */
         if (grf->version < 0x101) {
             /* Make sure name isn't too long */
-            len2 = (uint32_t)strlen(
-                buf + offset); /* NOTE: size_t => uint32_t conversion */
+            const size_t len2 = strlen(buf + offset);
             if (len2 >= GRF_NAMELEN) {
                 /* We can't handle names this long, and
                  * neither can the older patch clients,
@@ -345,14 +344,14 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 
             /* Swap nibbles into the name */
             GRF_SwapNibbles((uint8_t *)grf->files[i].name,
-                            (uint8_t *)(buf + offset), len2);
+                            (uint8_t *)(buf + offset), (uint32_t)len2);
         } else if (grf->version < 0x104) {
             /* Skip the first 2 bytes */
             offset += 2;
 
             /* Make sure we don't overflow */
-            len2 = len - 6;
-            if (len2 >= GRF_NAMELEN) {
+            const size_t len2 = len - 6;
+            if (len <= 6 || len2 >= GRF_NAMELEN) {
                 GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
                 free(buf);
                 return 1;
@@ -360,7 +359,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 
             /* Swap nibbles into DES decryption buffer */
             GRF_SwapNibbles((uint8_t *)namebuf, (uint8_t *)(buf + offset),
-                            len2);
+                            (uint32_t)len2);
 
 /* GRAVITY's DES implementation is broken and ignores the key, even
  * though they go through and generate the key in the following way
@@ -399,8 +398,8 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 #endif /* GRF_FIXED_KEYSCHEDULE */
 
             /* Decrypt the name */
-            GRF_MixedProcess(grf->files[i].name, namebuf, len2, 1, keyschedule,
-                             GRFCRYPT_DECRYPT);
+            GRF_MixedProcess(grf->files[i].name, namebuf, (uint32_t)len2, 1,
+                             keyschedule, GRFCRYPT_DECRYPT);
 
             /* Subtract 2 from len for the 2 bytes we skipped
              * over
@@ -410,6 +409,13 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 
         /* Skip past the name */
         offset += len;
+
+        /* Something's wrong here */
+        if (offset >= grf->len - 0x11) {
+            GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
+            free(buf);
+            return 1;
+        }
 
         /* Grab the rest of the file information */
         grf->files[i].compressed_len =
@@ -438,6 +444,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
                 /* Callback function had an error, so we
                  * have an error
                  */
+                free(buf);
                 return 1;
             } else if (callbackRet > 0) {
                 /* Callback function found the file it needed,
