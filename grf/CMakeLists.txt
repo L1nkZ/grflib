@@ -36,4 +36,9 @@ if (GRFLIB_BUILD_TESTS)
     "grf_test.cc"
   )
   target_link_libraries(grf_test PRIVATE grflib::grf gtest gtest_main)
+
+  add_executable(rgz_test
+    "rgz_test.cc"
+  )
+  target_link_libraries(rgz_test PRIVATE grflib::grf gtest gtest_main)
 endif (GRFLIB_BUILD_TESTS)
