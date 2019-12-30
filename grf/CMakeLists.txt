@@ -2,6 +2,7 @@
 add_definitions(-D_POSIX_C_SOURCE=200809L)
 
 set(GRFLIB_FILES
+    "grftypes.h"
     "grf.h"
     "grf.c"
     "grfcrypt.h"
