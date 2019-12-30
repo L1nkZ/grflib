@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    GrfError err = {};
+    GrfError err = {0};
     int ret;
 
     Grf* p_grf = grf_open(argv[1], "rb", &err);

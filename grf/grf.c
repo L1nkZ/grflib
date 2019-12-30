@@ -314,7 +314,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error, GrfOpenCallback callback
 		GRF_SETERR(error,GE_ERRNO,fseek);
 		return 1;
 	}
-	if (!fread(buf,len,1,grf->f)) {
+    if (len != 0 && !fread(buf,len,1,grf->f)) {
 		free(buf);
 		if (feof(grf->f))
 			/* When would it ever get here? Oh well, just in case */
