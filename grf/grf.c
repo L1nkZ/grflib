@@ -633,14 +633,15 @@ GRFEXPORT Grf *grf_callback_open(const char *fname, const char *mode,
     }
 
     /* Allocate memory for grf */
-    if ((grf = (Grf *)calloc(1, sizeof(Grf))) == NULL) {
-        GRF_SETERR(error, GE_ERRNO, malloc);
+    grf = (Grf *)calloc(1, sizeof(Grf));
+    if (grf == NULL) {
+        GRF_SETERR(error, GE_ERRNO, calloc);
         return NULL;
     }
 
     /* Allocate memory for grf filename */
-    if ((grf->filename = (char *)malloc(sizeof(char) * strlen(fname) + 1)) ==
-        NULL) {
+    grf->filename = (char *)malloc(sizeof(char) * strlen(fname) + 1);
+    if (grf->filename == NULL) {
         grf_free(grf);
         GRF_SETERR(error, GE_ERRNO, malloc);
         return NULL;
@@ -650,7 +651,8 @@ GRFEXPORT Grf *grf_callback_open(const char *fname, const char *mode,
     strcpy(grf->filename, fname);
 
     /* Open the file */
-    if ((grf->f = fopen(grf->filename, mode)) == NULL) {
+    grf->f = fopen(grf->filename, mode);
+    if (grf->f == NULL) {
         grf_free(grf);
         GRF_SETERR(error, GE_ERRNO, fopen);
         return NULL;
@@ -770,9 +772,9 @@ GRFEXPORT Grf *grf_callback_open(const char *fname, const char *mode,
                   LittleEndian32((uint8_t *)buf + GRF_HEADER_MID_LEN + 4) - 7;
 
     /* Create the array of files */
-    if (grf->nfiles) {
-        if ((grf->files = (GrfFile *)calloc(grf->nfiles, sizeof(GrfFile))) ==
-            NULL) {
+    if (grf->nfiles > 0) {
+        grf->files = (GrfFile *)calloc(grf->nfiles, sizeof(GrfFile));
+        if (grf->files == NULL) {
             grf_free(grf);
             GRF_SETERR(error, GE_ERRNO, calloc);
             return NULL;
@@ -1549,27 +1551,30 @@ GRFEXPORT void grf_close(Grf *grf) {
  * @param grf The Grf variable to close.
  */
 GRFEXPORT void grf_free(Grf *grf) {
-    uint32_t i;
-
     /* Ensure we don't have access violations when freeing NULLs */
-    if (!grf)
+    if (grf == NULL) {
         return;
+    }
 
     /* Free the grf name */
     free(grf->filename);
 
     /* Free the array of files */
-    for (i = 0; i < grf->nfiles; i++)
-        free(grf->files[i].data);
+    if (grf->files != NULL) {
+        for (uint32_t i = 0; i < grf->nfiles; i++) {
+            free(grf->files[i].data);
+        }
 
-    /* Free the array of files */
-    free(grf->files);
+        /* Free the array of files */
+        free(grf->files);
+    }
 
     free(grf->zbuf);
 
     /* Close the file */
-    if (grf->f)
+    if (grf->f != NULL) {
         fclose(grf->f);
+    }
 
     /* And finally, free the pointer itself */
     free(grf);
