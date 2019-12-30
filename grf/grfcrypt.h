@@ -44,10 +44,10 @@
 
 /** Encryption processing.
  * Used to tell grfcrypt.c's functions to encrypt rather than decrypt. */
-#define GRFCRYPT_ENCRYPT	0x00
+#define GRFCRYPT_ENCRYPT 0x00
 /** Decryption processing.
  * Used to tell grfcrypt.c's functions to decrypt rather than encrypt. */
-#define GRFCRYPT_DECRYPT	0x01
+#define GRFCRYPT_DECRYPT 0x01
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,13 +57,16 @@ extern "C" {
 char *DES_CreateKeySchedule(char *ks, const char *key);
 
 /* DES function to process a set amount of data */
-char *DES_Process(char *dst, const char *src, uint32_t len, const char *ks, uint8_t dir);
+char *DES_Process(char *dst, const char *src, uint32_t len, const char *ks,
+                  uint8_t dir);
 
 /* Function to process data, no matter what flags are set */
-char *GRF_Process(char *dst, const char *src, uint32_t len, uint8_t flags, uint32_t digitsGen, const char *ks, uint8_t dir);
+char *GRF_Process(char *dst, const char *src, uint32_t len, uint8_t flags,
+                  uint32_t digitsGen, const char *ks, uint8_t dir);
 
 /* Function to process data with the GRFFILE_FLAG_MIXCRYPT flag set */
-char *GRF_MixedProcess(char *dst, const char *src, uint32_t len, uint8_t digits, const char *ks, uint8_t dir);
+char *GRF_MixedProcess(char *dst, const char *src, uint32_t len, uint8_t digits,
+                       const char *ks, uint8_t dir);
 
 #ifdef __cplusplus
 }

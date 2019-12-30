@@ -27,59 +27,63 @@
 #include "grf.h"
 
 /*! \brief Value to distinguish a RGZ file in Grf::type */
-# define GRF_TYPE_RGZ	0x02
+#define GRF_TYPE_RGZ 0x02
 
 /* RGZ archived file types */
-# define RGZ_TYPE_DIRECTORY	'd'
-# define RGZ_TYPE_EOF		'e'
-# define RGZ_TYPE_FILE		'f'
+#define RGZ_TYPE_DIRECTORY 'd'
+#define RGZ_TYPE_EOF 'e'
+#define RGZ_TYPE_FILE 'f'
 
 /*! \brief Another name for Grf */
-# define Rgz Grf
+#define Rgz Grf
 /*! \brief Another name for GrfError */
-# define RgzError GrfError
+#define RgzError GrfError
 /*! \brief Another name for GrfErrorType */
-# define RgzErrorType GrfErrorType
+#define RgzErrorType GrfErrorType
 /*! \brief Another name for GrfFile */
-# define RgzFile GrfFile
+#define RgzFile GrfFile
 /*! \brief Another name for grf_free */
-# define rgz_free grf_free
+#define rgz_free grf_free
 /*! \brief Another name for grf_find */
-# define rgz_find grf_find
+#define rgz_find grf_find
 /*! \brief Another name for grf_find_unused */
-# define rgz_find_unused grf_find_unused
+#define rgz_find_unused grf_find_unused
 /*! \brief Another name for grf_sort */
-# define rgz_sort grf_sort
+#define rgz_sort grf_sort
 /*! \brief Another name for rgz_strerror */
-# define rgz_strerror grf_strerror
+#define rgz_strerror grf_strerror
 /*! \brief Another name for grflib_hash_name */
-# define RGZ_NameHash grflib_hash_name
+#define RGZ_NameHash grflib_hash_name
 /*! \brief Another name for GRF_AlphaSort */
-# define RGZ_AlphaSort GRF_AlphaSort
+#define RGZ_AlphaSort GRF_AlphaSort
 /*! \brief Another name for GRF_OffsetSort */
-# define RGZ_OffsetSort GRF_OffsetSort
+#define RGZ_OffsetSort GRF_OffsetSort
 /*! \brief Another name for GRF_SETERR */
-# define RGZ_SETERR GRF_SETERR
+#define RGZ_SETERR GRF_SETERR
 /*! \brief Another name for GRF_SETERR_2 */
-# define RGZ_SETERR_2 GRF_SETERR_2
+#define RGZ_SETERR_2 GRF_SETERR_2
 /*! \brief Another name for GRFERRTYPE */
-# define RGZERRTYPE GRFERRTYPE
+#define RGZERRTYPE GRFERRTYPE
 
 /*! \brief Macro to open a file without a callback function */
-# define rgz_open(fname,error) rgz_callback_open(fname,error,NULL)
+#define rgz_open(fname, error) rgz_callback_open(fname, error, NULL)
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
-GRFEXPORT Rgz *rgz_callback_open (const char *fname, RgzError *error, int (*entryInfoFunc)(RgzFile*,RgzError*));
-GRFEXPORT void *rgz_get (Rgz *rgz, const char *fname, uint32_t *size, RgzError *error);
-GRFEXPORT void *rgz_index_get (Rgz *rgz, uint32_t index, uint32_t *size, RgzError *error);
-GRFEXPORT int rgz_extract (Rgz *rgz, const char *grfname, const char *file, RgzError *error);
-GRFEXPORT int rgz_index_extract (Rgz *rgz, uint32_t index, const char *file, RgzError *error);
+GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error,
+                                 int (*entryInfoFunc)(RgzFile *, RgzError *));
+GRFEXPORT void *rgz_get(Rgz *rgz, const char *fname, uint32_t *size,
+                        RgzError *error);
+GRFEXPORT void *rgz_index_get(Rgz *rgz, uint32_t index, uint32_t *size,
+                              RgzError *error);
+GRFEXPORT int rgz_extract(Rgz *rgz, const char *grfname, const char *file,
+                          RgzError *error);
+GRFEXPORT int rgz_index_extract(Rgz *rgz, uint32_t index, const char *file,
+                                RgzError *error);
 
 GRFEXPORT void __rgz_free_memory__(void *buf);
-
 
 #ifdef __cplusplus
 }

@@ -23,8 +23,9 @@
 
 /** @mainpage
  * libgrf is a library for reading and writing GRF archives.
- * Application developers are probably most interested in grf.h and grfsupport.h.
- * Use the link bar on top of this page to browse the documentation.
+ * Application developers are probably most interested in grf.h and
+ * grfsupport.h. Use the link bar on top of this page to browse the
+ * documentation.
  */
 
 /** @file grf.h
@@ -32,56 +33,71 @@
  * Reading and writing .GRF archives.
  */
 
-#include "grftypes.h"
 #include "grfsupport.h"
+#include "grftypes.h"
 
-/** Callback prototype of a function called for each file entry when opening a GRF file.
+/** Callback prototype of a function called for each file entry when opening a
+ * GRF file.
  *
  * It should return -1 if there has been an error.
  * 0 if processing may continue,
- * or 1 if further reading should stop (for example, when trying to locate a file quickly)
+ * or 1 if further reading should stop (for example, when trying to locate a
+ * file quickly)
  *
  * @see grf_callback_open()
  *
  * @param file   Pointer to a Grf structure, as returned by grf_callback_open()
- * @param error  [out] Pointer to a GrfError variable for error reporting. When an error
- *               occured, the value of this parameter is non-NULL.
+ * @param error  [out] Pointer to a GrfError variable for error reporting. When
+ * an error occured, the value of this parameter is non-NULL.
  *
  */
-typedef int (*GrfOpenCallback) (GrfFile *file, GrfError *error);
-
+typedef int (*GrfOpenCallback)(GrfFile *file, GrfError *error);
 
 /** Value to distinguish a GRF file in Grf::type */
-# define GRF_TYPE_GRF 0x01
+#define GRF_TYPE_GRF 0x01
 
-/** @brief The same as grf_callback_open(), but without a callback parameter. Kept for compatibility with libgrf 0.9. */
-# define grf_open(fname, mode, error) grf_callback_open(fname, mode, error, NULL)
+/** @brief The same as grf_callback_open(), but without a callback parameter.
+ * Kept for compatibility with libgrf 0.9. */
+#define grf_open(fname, mode, error) grf_callback_open(fname, mode, error, NULL)
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
 /* Opening */
-GRFEXPORT Grf *grf_callback_open (const char *fname, const char *mode, GrfError *error, GrfOpenCallback callback);
+GRFEXPORT Grf *grf_callback_open(const char *fname, const char *mode,
+                                 GrfError *error, GrfOpenCallback callback);
 
 /* Extraction functions */
-GRFEXPORT void *grf_get (Grf *grf, const char *fname, uint32_t *size, GrfError *error);
-GRFEXPORT void *grf_get_z (Grf *grf, const char *fname, uint32_t *size, uint32_t *usize, GrfError *error);
-GRFEXPORT void *grf_chunk_get (Grf *grf, const char *fname, char *buf, uint32_t offset, uint32_t *len, GrfError *error);
-GRFEXPORT void *grf_index_get (Grf *grf, uint32_t index, uint32_t *size, GrfError *error);
-GRFEXPORT void *grf_index_get_z(Grf *grf, uint32_t index, uint32_t *size, uint32_t *usize, GrfError *error);
-GRFEXPORT void *grf_index_chunk_get (Grf *grf, uint32_t index, char *buf, uint32_t offset, uint32_t *len, GrfError *error);
-GRFEXPORT int grf_extract (Grf *grf, const char *grfname, const char *file, GrfError *error);
-GRFEXPORT int grf_index_extract (Grf *grf, uint32_t index, const char *file, GrfError *error);
+GRFEXPORT void *grf_get(Grf *grf, const char *fname, uint32_t *size,
+                        GrfError *error);
+GRFEXPORT void *grf_get_z(Grf *grf, const char *fname, uint32_t *size,
+                          uint32_t *usize, GrfError *error);
+GRFEXPORT void *grf_chunk_get(Grf *grf, const char *fname, char *buf,
+                              uint32_t offset, uint32_t *len, GrfError *error);
+GRFEXPORT void *grf_index_get(Grf *grf, uint32_t index, uint32_t *size,
+                              GrfError *error);
+GRFEXPORT void *grf_index_get_z(Grf *grf, uint32_t index, uint32_t *size,
+                                uint32_t *usize, GrfError *error);
+GRFEXPORT void *grf_index_chunk_get(Grf *grf, uint32_t index, char *buf,
+                                    uint32_t offset, uint32_t *len,
+                                    GrfError *error);
+GRFEXPORT int grf_extract(Grf *grf, const char *grfname, const char *file,
+                          GrfError *error);
+GRFEXPORT int grf_index_extract(Grf *grf, uint32_t index, const char *file,
+                                GrfError *error);
 
 /* GRF modification functions */
 GRFEXPORT int grf_del(Grf *grf, const char *fname, GrfError *error);
 GRFEXPORT int grf_index_del(Grf *grf, uint32_t index, GrfError *error);
 
-GRFEXPORT int grf_replace(Grf *grf, const char *name, const void *data, uint32_t len, uint8_t flags, GrfError *error);
-GRFEXPORT int grf_index_replace(Grf *grf, uint32_t index, const void *data, uint32_t len, uint8_t flags, GrfError *error);
+GRFEXPORT int grf_replace(Grf *grf, const char *name, const void *data,
+                          uint32_t len, uint8_t flags, GrfError *error);
+GRFEXPORT int grf_index_replace(Grf *grf, uint32_t index, const void *data,
+                                uint32_t len, uint8_t flags, GrfError *error);
 
-GRFEXPORT int grf_put(Grf *grf, const char *name, const void *data, uint32_t len, uint8_t flags, GrfError *error);
+GRFEXPORT int grf_put(Grf *grf, const char *name, const void *data,
+                      uint32_t len, uint8_t flags, GrfError *error);
 
 GRFEXPORT int grf_repak(const char *grf, const char *tmpgrf, GrfError *error);
 
@@ -89,14 +105,12 @@ GRFEXPORT int grf_repak(const char *grf, const char *tmpgrf, GrfError *error);
 GRFEXPORT void grf_close(Grf *grf);
 GRFEXPORT void grf_free(Grf *grf);
 
-
 /* Useful libgrf functions found in grfsupport:
  *
  * grf_find
  * grf_sort
  * grf_strerror
  */
-
 
 #ifdef __cplusplus
 }

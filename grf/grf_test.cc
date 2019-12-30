@@ -1,30 +1,31 @@
 #include <iostream>
 #include <string>
 
-#include <gtest/gtest.h>
 #include <grf/grf.h>
+#include <gtest/gtest.h>
 
 class GrfTest : public testing::Test {
- protected:
-  void SetUp() override {
-    const char* p_env = std::getenv("TESTDIR");
-    if (p_env == nullptr) {
-        std::cerr << "TESTDIR has not been set." << std::endl;
-        return;
+  protected:
+    void SetUp() override {
+        const char *p_env = std::getenv("TESTDIR");
+        if (p_env == nullptr) {
+            std::cerr << "TESTDIR has not been set." << std::endl;
+            return;
+        }
+
+        test_data_path_ = p_env;
     }
 
-    test_data_path_ = p_env;
-  }
-
-  // void TearDown() override {}
+    void TearDown() override {}
 
     std::string test_data_path_{};
 };
 
 TEST_F(GrfTest, GrfOpenApi) {
     {
-        GrfError err {};
-        EXPECT_EQ(nullptr, ::grf_callback_open("non-existent", "r", &err, NULL));
+        GrfError err{};
+        EXPECT_EQ(nullptr,
+                  ::grf_callback_open("non-existent", "r", &err, NULL));
 #ifndef _WIN32
         // Supposed to return errno on unix platforms
         ASSERT_EQ(GE_ERRNO, err.type);
@@ -35,17 +36,17 @@ TEST_F(GrfTest, GrfOpenApi) {
     }
 }
 
-void EmptyGrfOpenTest(const std::string& grf_path) {
+void EmptyGrfOpenTest(const std::string &grf_path) {
     GrfError err{};
-    Grf* p_grf = grf_open(grf_path.c_str(), "rb", &err);
+    Grf *p_grf = grf_open(grf_path.c_str(), "rb", &err);
     ASSERT_NE(nullptr, p_grf);
     EXPECT_EQ(0, p_grf->nfiles);
     grf_close(p_grf);
 }
 
-void SmallGrfOpenTest(const std::string& grf_path) {
+void SmallGrfOpenTest(const std::string &grf_path) {
     GrfError err{};
-    Grf* p_grf = grf_open(grf_path.c_str(), "rb", &err);
+    Grf *p_grf = grf_open(grf_path.c_str(), "rb", &err);
     ASSERT_NE(nullptr, p_grf);
     EXPECT_EQ(8, p_grf->nfiles);
     grf_close(p_grf);
