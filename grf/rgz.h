@@ -42,8 +42,8 @@
 #define RgzErrorType GrfErrorType
 /*! \brief Another name for GrfFile */
 #define RgzFile GrfFile
-/*! \brief Another name for grf_free */
-#define rgz_free grf_free
+/*! \brief Another name for grf_close */
+#define rgz_close grf_close
 /*! \brief Another name for grf_find */
 #define rgz_find grf_find
 /*! \brief Another name for grf_find_unused */
@@ -58,10 +58,6 @@
 #define RGZ_AlphaSort GRF_AlphaSort
 /*! \brief Another name for GRF_OffsetSort */
 #define RGZ_OffsetSort GRF_OffsetSort
-/*! \brief Another name for GRF_SETERR */
-#define RGZ_SETERR GRF_SETERR
-/*! \brief Another name for GRF_SETERR_2 */
-#define RGZ_SETERR_2 GRF_SETERR_2
 /*! \brief Another name for GRFERRTYPE */
 #define RGZERRTYPE GRFERRTYPE
 
@@ -82,8 +78,6 @@ GRFEXPORT int rgz_extract(Rgz *rgz, const char *grfname, const char *file,
                           RgzError *error);
 GRFEXPORT int rgz_index_extract(Rgz *rgz, uint32_t index, const char *file,
                                 RgzError *error);
-
-GRFEXPORT void __rgz_free_memory__(void *buf);
 
 #ifdef __cplusplus
 }

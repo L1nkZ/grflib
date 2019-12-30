@@ -29,7 +29,12 @@
 #include "grf/rgz.h"
 #include <zlib.h>
 
-/* This needs an update, badly */
+/*! \brief Another name for grf_free */
+#define rgz_free grf_free
+/*! \brief Another name for GRF_SETERR */
+#define RGZ_SETERR GRF_SETERR
+/*! \brief Another name for GRF_SETERR_2 */
+#define RGZ_SETERR_2 GRF_SETERR_2
 
 /*! \brief Open a RGZ file and read its contents, using a callback
  *
@@ -38,7 +43,8 @@
  * \param callback Function to call for each read file. It should return 0 if
  *		everything is fine, 1 if everything is fine (but further
  *		reading should stop), or -1 if there has been an error
- * \return A pointer to a newly created Rgz struct
+ * \return A pointer to a newly created Rgz struct. The pointer must be
+ *      explicitly freed by calling rgz_close
  */
 GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error,
                                  int (*callback)(RgzFile *, RgzError *)) {
@@ -57,14 +63,15 @@ GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error,
     }
 
     /* Allocate memory for grf */
-    if ((rgz = (Rgz *)calloc(1, sizeof(Rgz))) == NULL) {
+    rgz = (Rgz *)calloc(1, sizeof(Rgz));
+    if (rgz == NULL) {
         RGZ_SETERR(error, GE_ERRNO, calloc);
         return NULL;
     }
 
     /* Allocate memory for rgz filename */
-    if ((rgz->filename = (char *)malloc(sizeof(char) * (strlen(fname) + 1))) ==
-        NULL) {
+    rgz->filename = (char *)malloc(sizeof(char) * (strlen(fname) + 1));
+    if (rgz->filename == NULL) {
         RGZ_SETERR(error, GE_ERRNO, malloc);
         rgz_free(rgz);
         return NULL;
@@ -74,14 +81,16 @@ GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error,
     strcpy(rgz->filename, fname);
 
     /* Open the file */
-    if ((rgz->f = fopen(fname, "rb")) == NULL) {
+    rgz->f = fopen(fname, "rb");
+    if (rgz->f == NULL) {
         RGZ_SETERR(error, GE_ERRNO, fopen);
         rgz_free(rgz);
         return NULL;
     }
 
     /* Open the file with zlib's GZip functions */
-    if ((rgzfile = gzdopen(dup(fileno(rgz->f)), "r+b")) == NULL) {
+    rgzfile = gzdopen(dup(fileno(rgz->f)), "rb");
+    if (rgzfile == Z_NULL) {
         RGZ_SETERR(error, GE_ERRNO, gzdopen);
         rgz_free(rgz);
         return NULL;
@@ -94,14 +103,16 @@ GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error,
     end = 0;
     while (!end) {
         /* Grab the next data type */
-        if ((type = gzgetc(rgzfile)) < 0) {
+        type = gzgetc(rgzfile);
+        if (type < 0) {
             RGZ_SETERR_2(error, GE_ZLIBFILE, gzgetc, rgzfile);
             rgz_free(rgz);
             return NULL;
         }
 
         /* Read the length of the name */
-        if ((len = gzgetc(rgzfile)) < 0) {
+        len = gzgetc(rgzfile);
+        if (len < 0) {
             RGZ_SETERR_2(error, GE_ZLIBFILE, gzgetc, rgzfile);
             rgz_free(rgz);
             return NULL;
@@ -214,7 +225,7 @@ GRFEXPORT Rgz *rgz_callback_open(const char *fname, RgzError *error,
  *	extracted should be stored
  * \param error Pointer to a RgzErrorType struct/enum for error reporting
  * \return A pointer to data that has been extracted, NULL if an error
- *	has occurred
+ *	has occurred. The pointer must be explicitly freed by calling free
  */
 GRFEXPORT void *rgz_get(Rgz *rgz, const char *fname, uint32_t *size,
                         RgzError *error) {
@@ -308,16 +319,13 @@ GRFEXPORT int rgz_index_extract(Rgz *rgz, uint32_t index, const char *file,
 
 /*! \brief Extract a file into memory, taking index instead of name
  *
- * \warning Memory will be leaked unless the pointer returned is properly
- *	freed by calling __rgz_free_memory__()
- *
  * \param rgz Pointer to information about the RGZ to extract from
  * \param index Index of the file to be extracted
  * \param size Pointer to a location in memory where the size of memory
  *	extracted should be stored
  * \param error Pointer to a RgzErrorType struct/enum for error reporting
  * \return A pointer to data that has been extracted, NULL if an error
- *	has occurred
+ *	has occurred. The pointer must be explicitly freed by calling free
  */
 GRFEXPORT void *rgz_index_get(Rgz *rgz, uint32_t index, uint32_t *size,
                               RgzError *error) {
@@ -396,9 +404,3 @@ GRFEXPORT void *rgz_index_get(Rgz *rgz, uint32_t index, uint32_t *size,
     /* Return the data */
     return outbuf;
 }
-
-/*! \brief Frees allocated memory (same rationale as __grf_free_memory__())
- *
- * \param buf Pointer to memory area to be freed
- */
-GRFEXPORT void __rgz_free_memory__(void *buf) { free(buf); }
