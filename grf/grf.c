@@ -260,8 +260,9 @@ static char *GRF_GenerateDataKey(char *key, const char *src) {
 static int GRF_readVer1_info(Grf *grf, GrfError *error,
                              GrfOpenCallback callback) {
     int callbackRet;
-    int64_t offset;
-    char namebuf[GRF_NAMELEN], keyschedule[0x80], *buf;
+    char namebuf[GRF_NAMELEN];
+    char keyschedule[0x80];
+    char *buf = NULL;
 
 #ifdef GRF_FIXED_KEYSCHEDULE
     char key[8];
@@ -283,13 +284,17 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
         GRF_SETERR(error, GE_ERRNO, ftell);
         return 1;
     }
-    offset = ftell(grf->f);
+    ssize_t offset = ftell(grf->f);
 
     /* Grab the length of the table */
-    size_t len = (size_t)((grf->len) - offset);
+    const size_t buf_size = (size_t)((grf->len) - offset);
+    if (buf_size == 0) {
+        /* Empty table, no files, we're done */
+        return 0;
+    }
 
     /* Allocate memory for, and grab the table */
-    buf = (char *)malloc(len);
+    buf = (char *)malloc(buf_size);
     if (buf == NULL) {
         GRF_SETERR(error, GE_ERRNO, malloc);
         return 1;
@@ -299,13 +304,14 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
         GRF_SETERR(error, GE_ERRNO, fseek);
         return 1;
     }
-    if (len != 0 && !fread(buf, len, 1, grf->f)) {
+    if (!fread(buf, buf_size, 1, grf->f)) {
         free(buf);
-        if (feof(grf->f))
+        if (feof(grf->f)) {
             /* When would it ever get here? Oh well, just in case */
             GRF_SETERR(error, GE_CORRUPTED, fread);
-        else
+        } else {
             GRF_SETERR(error, GE_ERRNO, fread);
+        }
         return 1;
     }
 
@@ -318,20 +324,28 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 #endif /* GRF_FIXED_KEYSCHEDULE */
 
     /* Read information about each file */
-    for (uint32_t i = offset = 0; i < grf->nfiles; i++
+    size_t buf_offset = 0;
+    for (uint32_t i = 0; i < grf->nfiles; i++
 #ifdef GRF_FIXED_KEYSCHEDULE
-                                                   ,
+                                          ,
                   keygen102 += 5, keygen101 -= 2
 #endif /* GRF_FIXED_KEYSCHEDULE */
     ) {
         /* Get the name length */
-        len = LittleEndian32((uint8_t *)buf + offset);
-        offset += 4;
+        if (buf_offset >= buf_size - 4) {
+            /* Something's wrong here */
+            GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
+            free(buf);
+            return 1;
+        }
+        uint32_t name_len = LittleEndian32((uint8_t *)buf + buf_offset);
+        buf_offset += 4;
 
         /* Decide how to decode the name */
         if (grf->version < 0x101) {
             /* Make sure name isn't too long */
-            const size_t len2 = strlen(buf + offset);
+            const size_t len2 =
+                strnlen(buf + buf_offset, buf_size - buf_offset);
             if (len2 >= GRF_NAMELEN) {
                 /* We can't handle names this long, and
                  * neither can the older patch clients,
@@ -344,21 +358,21 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 
             /* Swap nibbles into the name */
             GRF_SwapNibbles((uint8_t *)grf->files[i].name,
-                            (uint8_t *)(buf + offset), (uint32_t)len2);
+                            (uint8_t *)(buf + buf_offset), (uint32_t)len2);
         } else if (grf->version < 0x104) {
             /* Skip the first 2 bytes */
-            offset += 2;
+            buf_offset += 2;
 
             /* Make sure we don't overflow */
-            const size_t len2 = len - 6;
-            if (len <= 6 || len2 >= GRF_NAMELEN) {
+            const size_t len2 = name_len - 6;
+            if (name_len <= 6 || len2 >= GRF_NAMELEN) {
                 GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
                 free(buf);
                 return 1;
             }
 
             /* Swap nibbles into DES decryption buffer */
-            GRF_SwapNibbles((uint8_t *)namebuf, (uint8_t *)(buf + offset),
+            GRF_SwapNibbles((uint8_t *)namebuf, (uint8_t *)(buf + buf_offset),
                             (uint32_t)len2);
 
 /* GRAVITY's DES implementation is broken and ignores the key, even
@@ -404,39 +418,40 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
             /* Subtract 2 from len for the 2 bytes we skipped
              * over
              */
-            len -= 2;
+            name_len -= 2;
         }
 
         /* Skip past the name */
-        offset += len;
+        buf_offset += name_len;
 
-        /* Something's wrong here */
-        if (offset >= grf->len - 0x11) {
+        /* Grab the rest of the file information */
+        if (buf_offset >= buf_size - 0x11) {
+            /* Something's wrong here */
             GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
             free(buf);
             return 1;
         }
-
-        /* Grab the rest of the file information */
         grf->files[i].compressed_len =
-            LittleEndian32((uint8_t *)buf + offset) -
-            LittleEndian32((uint8_t *)buf + offset + 8) - 0x02CB;
+            LittleEndian32((uint8_t *)buf + buf_offset) -
+            LittleEndian32((uint8_t *)buf + buf_offset + 8) - 0x02CB;
         grf->files[i].compressed_len_aligned =
-            LittleEndian32((uint8_t *)buf + offset + 4) - 0x92CB;
-        grf->files[i].real_len = LittleEndian32((uint8_t *)buf + offset + 8);
-        grf->files[i].flags = *(uint8_t *)(buf + offset + 0xC);
-        grf->files[i].pos =
-            LittleEndian32((uint8_t *)buf + offset + 0xD) + GRF_HEADER_FULL_LEN;
+            LittleEndian32((uint8_t *)buf + buf_offset + 4) - 0x92CB;
+        grf->files[i].real_len =
+            LittleEndian32((uint8_t *)buf + buf_offset + 8);
+        grf->files[i].flags = *(uint8_t *)(buf + buf_offset + 0xC);
+        grf->files[i].pos = LittleEndian32((uint8_t *)buf + buf_offset + 0xD) +
+                            GRF_HEADER_FULL_LEN;
         grf->files[i].hash = grflib_hash_name(grf->files[i].name);
 
         /* Check if the file is a special file */
-        if (GRF_CheckExt(grf->files[i].name, specialExts))
+        if (GRF_CheckExt(grf->files[i].name, specialExts)) {
             grf->files[i].flags |= GRFFILE_FLAG_0x14_DES;
-        else
+        } else {
             grf->files[i].flags |= GRFFILE_FLAG_MIXCRYPT;
+        }
 
         /* Go to the next file */
-        offset += 0x11;
+        buf_offset += 0x11;
 
         /* Run the callback, if we have one */
         if (callback) {
@@ -478,7 +493,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 static int GRF_readVer2_info(Grf *grf, GrfError *error,
                              GrfOpenCallback callback) {
     int callbackRet;
-    uint32_t i, offset, len, len2;
+    uint32_t i, len, len2;
     int z;
     uLongf zlen;
     char *buf, *zbuf;
@@ -546,10 +561,10 @@ static int GRF_readVer2_info(Grf *grf, GrfError *error,
     free(zbuf);
 
     /* Read information about each file */
-    for (i = offset = 0; i < grf->nfiles; i++) {
+    size_t buf_offset = 0;
+    for (i = 0; i < grf->nfiles; i++) {
         /* Grab the filename length */
-        len = (uint32_t)strlen(buf + offset) +
-              1; /* NOTE: size_t => uint32_t conversion */
+        size_t len = strnlen(buf + buf_offset, zlen - buf_offset) + 1;
 
         /* Make sure its not too large */
         if (len >= GRF_NAMELEN) {
@@ -559,21 +574,29 @@ static int GRF_readVer2_info(Grf *grf, GrfError *error,
         }
 
         /* Grab filename */
-        memcpy(grf->files[i].name, buf + offset, len);
-        offset += len;
+        memcpy(grf->files[i].name, buf + buf_offset, len);
+        buf_offset += len;
 
         /* Grab the rest of the information */
-        grf->files[i].compressed_len = LittleEndian32((uint8_t *)buf + offset);
+        if (buf_offset >= zlen - 0x11) {
+            /* Something's wrong here */
+            GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
+            free(buf);
+            return 1;
+        }
+        grf->files[i].compressed_len =
+            LittleEndian32((uint8_t *)buf + buf_offset);
         grf->files[i].compressed_len_aligned =
-            LittleEndian32((uint8_t *)buf + offset + 4);
-        grf->files[i].real_len = LittleEndian32((uint8_t *)buf + offset + 8);
-        grf->files[i].flags = *(uint8_t *)(buf + offset + 0xC);
-        grf->files[i].pos =
-            LittleEndian32((uint8_t *)buf + offset + 0xD) + GRF_HEADER_FULL_LEN;
+            LittleEndian32((uint8_t *)buf + buf_offset + 4);
+        grf->files[i].real_len =
+            LittleEndian32((uint8_t *)buf + buf_offset + 8);
+        grf->files[i].flags = *(uint8_t *)(buf + buf_offset + 0xC);
+        grf->files[i].pos = LittleEndian32((uint8_t *)buf + buf_offset + 0xD) +
+                            GRF_HEADER_FULL_LEN;
         grf->files[i].hash = grflib_hash_name(grf->files[i].name);
 
         /* Advance to the next file */
-        offset += 0x11;
+        buf_offset += 0x11;
 
         /* Run the callback, if we have one */
         if (callback) {
