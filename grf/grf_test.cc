@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <grf/grf.h>
 #include <gtest/gtest.h>
@@ -33,6 +34,20 @@ TEST_F(GrfTest, GrfOpenApi) {
 #else
         // TODO(LinkZ)
 #endif // _WIN32
+    }
+}
+
+// This test is supposed to crash/throw in case of failure
+TEST_F(GrfTest, GrfOpenRegressionCheck) {
+    const std::vector<std::string> regs = {"reg001.grf", "reg002.grf",
+                                           "reg003.grf", "reg004.grf"};
+    for (const auto &reg : regs) {
+        GrfError err{};
+        auto p_grf = ::grf_callback_open(
+            (test_data_path_ + "/grf/" + reg).c_str(), "r", &err, nullptr);
+        if (p_grf != nullptr) {
+            ::grf_close(p_grf);
+        }
     }
 }
 

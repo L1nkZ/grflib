@@ -332,7 +332,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
 #endif /* GRF_FIXED_KEYSCHEDULE */
     ) {
         /* Get the name length */
-        if (buf_offset >= buf_size - 4) {
+        if (buf_offset > buf_size - 4) {
             /* Something's wrong here */
             GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
             free(buf);
@@ -425,7 +425,7 @@ static int GRF_readVer1_info(Grf *grf, GrfError *error,
         buf_offset += name_len;
 
         /* Grab the rest of the file information */
-        if (buf_offset >= buf_size - 0x11) {
+        if (buf_offset > buf_size - 0x11) {
             /* Something's wrong here */
             GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
             free(buf);
@@ -578,7 +578,7 @@ static int GRF_readVer2_info(Grf *grf, GrfError *error,
         buf_offset += len;
 
         /* Grab the rest of the information */
-        if (buf_offset >= zlen - 0x11) {
+        if (buf_offset > zlen - 0x11) {
             /* Something's wrong here */
             GRF_SETERR(error, GE_CORRUPTED, GRF_readVer1_info);
             free(buf);
