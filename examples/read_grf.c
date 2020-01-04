@@ -21,6 +21,11 @@ int main(int argc, char *argv[]) {
     printf("GRF '%s':\n", p_grf->filename);
     printf("Version: %X\n", p_grf->version);
     printf("Number of files: %u\n", p_grf->nfiles);
+    printf("Files:\n");
+    for (uint32_t i = 0; i < p_grf->nfiles; i++) {
+        printf("%c %d '%s'\n", GRFFILE_IS_DIR(p_grf->files[i]) ? 'd' : 'f',
+               p_grf->files[i].real_len, p_grf->files[i].name);
+    }
 
     ret = 0;
 

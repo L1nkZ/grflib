@@ -62,12 +62,29 @@ void EmptyGrfOpenTest(const std::string &grf_path, uint32_t expected_version) {
 }
 
 void SmallGrfOpenTest(const std::string &grf_path, uint32_t expected_version) {
+    const std::map<std::string, size_t> expected_content{
+        {"data\\06guild_r.gat", 800014},
+        {"data\\06guild_r.gnd", 454622},
+        {"data\\06guild_r.rsw", 69798},
+        {"data\\sprite\\\xB8\xF3\xBD\xBA\xC5\xCD\\high_orc.act", 491076},
+        {"data\\sprite\\\xB8\xF3\xBD\xBA\xC5\xCD\\high_orc.spr", 250592},
+        {"data\\texture\\chdesk-side1.bmp", 33844},
+        {"data\\texture\\chdesk-side2.bmp", 33844},
+        {"data\\texture\\chdesk-side3.bmp", 17460}};
+
     GrfError err{};
     Grf *p_grf = ::grf_open(grf_path.c_str(), "rb", &err);
     ASSERT_NE(nullptr, p_grf);
     EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
     EXPECT_EQ(expected_version, p_grf->version);
-    EXPECT_EQ(8, p_grf->nfiles);
+    ASSERT_EQ(expected_content.size(), p_grf->nfiles);
+    // Check that files are present and of the correct size
+    for (uint32_t i = 0; i < p_grf->nfiles; i++) {
+        const auto elem = expected_content.find(p_grf->files[i].name);
+        ASSERT_NE(std::cend(expected_content), elem);
+        EXPECT_EQ(elem->second, p_grf->files[i].real_len);
+    }
+
     ::grf_close(p_grf);
 }
 
@@ -109,13 +126,26 @@ TEST_F(GrfTest, GrfOpen200) {
 
 TEST_F(GrfTest, GpfOpen) {
     {
+        const std::map<std::string, size_t> expected_content{
+            {"data\\lua files", GRFFILE_DIR_SZORIG},           // Directory
+            {"data\\lua files\\datainfo", GRFFILE_DIR_SZORIG}, // Directory
+            {"data\\lua files\\datainfo\\accessoryid.lub", 43611},
+            {"data\\lua files\\datainfo\\accname.lub", 61867}};
+
         const std::string gpf_path = test_data_path_ + "/gpf/102-small.gpf";
         GrfError err{};
         Grf *p_grf = ::grf_open(gpf_path.c_str(), "rb", &err);
         ASSERT_NE(nullptr, p_grf);
         // GPF is actually the same file format as GRF for this version
         EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
-        EXPECT_EQ(4, p_grf->nfiles);
+        EXPECT_EQ(expected_content.size(), p_grf->nfiles);
+        // Check that files are present and of the correct size
+        for (uint32_t i = 0; i < p_grf->nfiles; i++) {
+            const auto elem = expected_content.find(p_grf->files[i].name);
+            ASSERT_NE(std::cend(expected_content), elem);
+            EXPECT_EQ(elem->second, p_grf->files[i].real_len);
+        }
+
         ::grf_close(p_grf);
     }
 
