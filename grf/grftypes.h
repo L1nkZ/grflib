@@ -204,7 +204,7 @@ typedef struct _GrfFile {
      */
     uint32_t compressed_len_aligned;
     uint32_t compressed_len; /**<  Compressed size */
-    uint32_t real_len;       /**<  Original (decompressed) file size */
+    size_t real_len;         /**<  Original (decompressed) file size */
     int64_t pos;             /**< location in GRF archive */
 
 /* Directories have specific sizes and offsets, even though

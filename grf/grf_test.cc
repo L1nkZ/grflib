@@ -160,3 +160,30 @@ TEST_F(GrfTest, GpfOpen) {
         ::grf_close(p_grf);
     }
 }
+
+TEST_F(GrfTest, GrfGetFile) {
+    const std::string grf_path = test_data_path_ + "/grf/200-small.grf";
+    GrfError err{};
+    Grf *p_grf = ::grf_open(grf_path.c_str(), "rb", &err);
+    ASSERT_NE(nullptr, p_grf);
+
+    {
+        // Get file by index
+        constexpr uint32_t id = 3; // <...>\high_orc.act
+        size_t data_size = 0;
+        void *p_data = ::grf_index_get(p_grf, id, &data_size, &err);
+        EXPECT_NE(nullptr, p_data);
+        EXPECT_EQ(491076, data_size);
+    }
+
+    {
+        // Get file by name
+        const char *p_file_name = "data\\06guild_r.gnd";
+        size_t data_size = 0;
+        void *p_data = ::grf_get(p_grf, p_file_name, &data_size, &err);
+        EXPECT_NE(nullptr, p_data);
+        EXPECT_EQ(454622, data_size);
+    }
+
+    ::grf_close(p_grf);
+}

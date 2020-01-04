@@ -695,12 +695,12 @@ GRFEXPORT Grf *grf_callback_open(const char *fname, const char *mode,
         /* storing "compressed" length into zlen */
         if ((z = compress((Bytef *)zbuf, &zlen, (const Bytef *)buf, 0)) !=
             Z_OK) {
-            GRF_SETERR_2(error, GE_ZLIB, compress,
-                         (ssize_t)z); /* NOTE: uint => ssize_t /-signed-/ =>
-                                         uintptr* conversion */
+            /* NOTE: uint => ssize_t /-signed-/ =>
+                                                     uintptr* conversion */
+            GRF_SETERR_2(error, GE_ZLIB, compress, (ssize_t)z);
             return NULL;
         }
-        zlen_le = ToLittleEndian32(zlen);
+        zlen_le = ToLittleEndian32((uint32_t)zlen);
 
         if (0 == fwrite(GRF_HEADER, GRF_HEADER_LEN, 1,
                         grf->f) || /* MoM header */
@@ -862,7 +862,7 @@ GRFEXPORT Grf *grf_callback_open(const char *fname, const char *mode,
  * @return       A pointer to data that has been extracted, NULL if an error
  *               has occurred. The pointer must not be freed manually.
  */
-GRFEXPORT void *grf_get(Grf *grf, const char *fname, uint32_t *size,
+GRFEXPORT void *grf_get(Grf *grf, const char *fname, size_t *size,
                         GrfError *error) {
     uint32_t i;
 
@@ -892,11 +892,11 @@ GRFEXPORT void *grf_get(Grf *grf, const char *fname, uint32_t *size,
  * \return A pointer to data that has been extracted, NULL if an error
  *	has occurred. The pointer must not be freed manually.
  */
-GRFEXPORT void *grf_index_get(Grf *grf, uint32_t index, uint32_t *size,
+GRFEXPORT void *grf_index_get(Grf *grf, uint32_t index, size_t *size,
                               GrfError *error) {
     uLongf zlen;
     int z;
-    uint32_t rsiz, zsiz;
+    size_t rsiz, zsiz;
     char *zbuf;
 
     /* Make sure we've got valid arguments */
@@ -998,8 +998,8 @@ GRFEXPORT void *grf_index_get(Grf *grf, uint32_t index, uint32_t *size,
  *GRFFILE_DIR_OFFSET is returned, cast to void* and *size is set to
  *GRFFILE_DIR_SZFILE, *usize to GRFFILE_DIR_SZORIG.
  */
-GRFEXPORT void *grf_index_get_z(Grf *grf, uint32_t index, uint32_t *size,
-                                uint32_t *usize, GrfError *error) {
+GRFEXPORT void *grf_index_get_z(Grf *grf, uint32_t index, size_t *size,
+                                size_t *usize, GrfError *error) {
     GrfFile *gfile;
     char keyschedule[0x80], key[8], *buf, *zbuf;
 
@@ -1094,8 +1094,8 @@ GRFEXPORT void *grf_index_get_z(Grf *grf, uint32_t index, uint32_t *size,
  *special value GRFFILE_DIR_OFFSET is returned, cast to void* and *size is set
  *to GRFFILE_DIR_SZFILE, *usize to GRFFILE_DIR_SZORIG.
  */
-GRFEXPORT void *grf_get_z(Grf *grf, const char *fname, uint32_t *size,
-                          uint32_t *usize, GrfError *error) {
+GRFEXPORT void *grf_get_z(Grf *grf, const char *fname, size_t *size,
+                          size_t *usize, GrfError *error) {
     uint32_t i;
 
     /* Make sure we've got valid arguments */
@@ -1130,25 +1130,25 @@ GRFEXPORT void *grf_get_z(Grf *grf, const char *fname, uint32_t *size,
  * @return If successful, it returns buf. Otherwise, NULL
  */
 GRFEXPORT void *grf_chunk_get(Grf *grf, const char *fname, char *buf,
-                              uint32_t offset, uint32_t *len, GrfError *error) {
+                              uint32_t offset, size_t *size, GrfError *error) {
     uint32_t i;
 
     /* Check our arguments */
     if (!grf || !fname || grf->type != GRF_TYPE_GRF) {
         GRF_SETERR(error, GE_BADARGS, grf_chunk_get);
-        *len = 0;
+        *size = 0;
         return NULL;
     }
 
     /* Use grf_find() to get the index */
     if (!grf_find(grf, fname, &i)) {
         GRF_SETERR(error, GE_NOTFOUND, grf_chunk_get);
-        *len = 0;
+        *size = 0;
         return NULL;
     }
 
     /* Use grf_index_chunk_get() */
-    return grf_index_chunk_get(grf, i, buf, offset, len, error);
+    return grf_index_chunk_get(grf, i, buf, offset, size, error);
 }
 
 /** Retrieve a decompressed block of data from a file.
@@ -1166,35 +1166,35 @@ GRFEXPORT void *grf_chunk_get(Grf *grf, const char *fname, char *buf,
  * @return If successful, a duplicate pointer to buf. Otherwise, NULL
  */
 GRFEXPORT void *grf_index_chunk_get(Grf *grf, uint32_t index, char *buf,
-                                    uint32_t offset, uint32_t *len,
+                                    uint32_t offset, size_t *size,
                                     GrfError *error) {
     void *fullbuf;
-    uint32_t fullsize;
+    size_t fullsize = 0;
 
     /* Check our arguments */
-    if (!grf || !buf || !len) {
+    if (!grf || !buf || !size) {
         GRF_SETERR(error, GE_BADARGS, grf_index_chunk_get);
-        *len = 0;
+        *size = 0;
         return NULL;
     }
 
     /* Extract our file */
     if ((fullbuf = grf_index_get(grf, index, &fullsize, error)) == NULL) {
-        *len = 0;
+        *size = 0;
         return NULL;
     }
 
     /* Decide how much data we actually have to give 'em */
     if (offset >= fullsize) {
         GRF_SETERR(error, GE_NODATA, grf_index_chunk_get);
-        *len = 0;
+        *size = 0;
         return NULL;
     }
-    if (*len > fullsize - offset)
-        *len = fullsize - offset;
+    if (*size > fullsize - offset)
+        *size = fullsize - offset;
 
     /* Copy the memory */
-    memcpy(buf, (void *)((char *)(fullbuf) + offset), *len);
+    memcpy(buf, (void *)((char *)(fullbuf) + offset), *size);
 
     /* Return the memory */
     return buf;
@@ -1236,7 +1236,7 @@ GRFEXPORT int grf_index_extract(Grf *grf, uint32_t index, const char *file,
                                 GrfError *error) {
     void *buf;
     char *fixedname;
-    uint32_t size, i;
+    size_t size, i;
     FILE *f;
 
     /* Make sure we have a filename to write to */
