@@ -30,10 +30,6 @@
  * Prenk = Prank? Lame ass GRAVITY joke I guess.
  */
 
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -51,12 +47,10 @@
 
 /* Headers */
 #define GRF_HEADER "Master of Magic"
-#define GRF_HEADER_LEN                                                         \
-    (sizeof(GRF_HEADER) - 1)                            /* -1 to strip         \
-                                                         * null terminator     \
-                                                         */
-#define GRF_HEADER_MID_LEN (sizeof(GRF_HEADER) + 0xE)   /* -1 + 0xF */
-#define GRF_HEADER_FULL_LEN (sizeof(GRF_HEADER) + 0x1E) /* -1 + 0x1F */
+/* -1 to strip null terminator */
+#define GRF_HEADER_LEN (sizeof(GRF_HEADER) - 1)
+#define GRF_HEADER_MID_LEN (GRF_HEADER_LEN + 0xF)
+#define GRF_HEADER_FULL_LEN (GRF_HEADER_LEN + 0x1F)
 
 /** Special file extensions.
  *

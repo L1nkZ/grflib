@@ -19,7 +19,6 @@ int main(int argc, char *argv[]) {
     }
 
     printf("RGZ '%s':\n", p_rgz->filename);
-    printf("Version: %X\n", p_rgz->version);
     printf("Number of files: %u\n", p_rgz->nfiles);
 
     ret = 0;

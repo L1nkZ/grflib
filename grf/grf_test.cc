@@ -53,22 +53,22 @@ TEST_F(GrfTest, GrfOpenRegressionCheck) {
 
 void EmptyGrfOpenTest(const std::string &grf_path, uint32_t expected_version) {
     GrfError err{};
-    Grf *p_grf = grf_open(grf_path.c_str(), "rb", &err);
+    Grf *p_grf = ::grf_open(grf_path.c_str(), "rb", &err);
     ASSERT_NE(nullptr, p_grf);
     EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
     EXPECT_EQ(expected_version, p_grf->version);
     EXPECT_EQ(0, p_grf->nfiles);
-    grf_close(p_grf);
+    ::grf_close(p_grf);
 }
 
 void SmallGrfOpenTest(const std::string &grf_path, uint32_t expected_version) {
     GrfError err{};
-    Grf *p_grf = grf_open(grf_path.c_str(), "rb", &err);
+    Grf *p_grf = ::grf_open(grf_path.c_str(), "rb", &err);
     ASSERT_NE(nullptr, p_grf);
     EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
     EXPECT_EQ(expected_version, p_grf->version);
     EXPECT_EQ(8, p_grf->nfiles);
-    grf_close(p_grf);
+    ::grf_close(p_grf);
 }
 
 TEST_F(GrfTest, GrfOpen102) {
@@ -79,7 +79,6 @@ TEST_F(GrfTest, GrfOpen102) {
 
     {
         const std::string small102 = test_data_path_ + "/grf/102-small.grf";
-        SmallGrfOpenTest(small102, 0x102);
         SmallGrfOpenTest(small102, 0x102);
     }
 }
@@ -112,22 +111,22 @@ TEST_F(GrfTest, GpfOpen) {
     {
         const std::string gpf_path = test_data_path_ + "/gpf/102-small.gpf";
         GrfError err{};
-        Grf *p_grf = grf_open(gpf_path.c_str(), "rb", &err);
+        Grf *p_grf = ::grf_open(gpf_path.c_str(), "rb", &err);
         ASSERT_NE(nullptr, p_grf);
         // GPF is actually the same file format as GRF for this version
         EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
         EXPECT_EQ(4, p_grf->nfiles);
-        grf_close(p_grf);
+        ::grf_close(p_grf);
     }
 
     {
         const std::string gpf_path = test_data_path_ + "/gpf/103-small.gpf";
         GrfError err{};
-        Grf *p_grf = grf_open(gpf_path.c_str(), "rb", &err);
+        Grf *p_grf = ::grf_open(gpf_path.c_str(), "rb", &err);
         ASSERT_NE(nullptr, p_grf);
         // GPF is actually the same file format as GRF for this version
         EXPECT_EQ(GRF_TYPE_GRF, p_grf->type);
         EXPECT_EQ(89, p_grf->nfiles);
-        grf_close(p_grf);
+        ::grf_close(p_grf);
     }
 }
