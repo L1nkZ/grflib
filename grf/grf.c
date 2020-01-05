@@ -1270,7 +1270,7 @@ GRFEXPORT int grf_index_extract(Grf *grf, uint32_t index, const char *file,
 
     /* Write the data */
     i = (uint32_t)fwrite(buf, size, 1, f);
-    if (0 == i) { /* NOTE: size_t => uint32_t conversion */
+    if (0 == i) {
         GRF_SETERR(error, GE_ERRNO, fwrite);
     }
 

@@ -71,17 +71,17 @@ GRFEXPORT Grf *grf_callback_open(const char *fname, const char *mode,
 /* Extraction functions */
 GRFEXPORT void *grf_get(Grf *grf, const char *fname, size_t *size,
                         GrfError *error);
-GRFEXPORT void *grf_get_z(Grf *grf, const char *fname, size_t *size,
-                          size_t *usize, GrfError *error);
 GRFEXPORT void *grf_chunk_get(Grf *grf, const char *fname, char *buf,
                               uint32_t offset, size_t *len, GrfError *error);
 GRFEXPORT void *grf_index_get(Grf *grf, uint32_t index, size_t *size,
                               GrfError *error);
-GRFEXPORT void *grf_index_get_z(Grf *grf, uint32_t index, size_t *size,
-                                size_t *usize, GrfError *error);
 GRFEXPORT void *grf_index_chunk_get(Grf *grf, uint32_t index, char *buf,
                                     uint32_t offset, size_t *size,
                                     GrfError *error);
+GRFEXPORT void *grf_get_z(Grf *grf, const char *fname, size_t *size,
+                          size_t *usize, GrfError *error);
+GRFEXPORT void *grf_index_get_z(Grf *grf, uint32_t index, size_t *size,
+                                size_t *usize, GrfError *error);
 GRFEXPORT int grf_extract(Grf *grf, const char *grfname, const char *file,
                           GrfError *error);
 GRFEXPORT int grf_index_extract(Grf *grf, uint32_t index, const char *file,
