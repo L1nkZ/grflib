@@ -1,0 +1,13 @@
+before_install:
+  - sudo apt-get install build-essential
+
+language: c
+
+compiler:
+  - clang
+
+script:
+  - rm -rf build/
+  - mkdir build && cd build
+  - cmake .. -DGRFLIB_BUILD_EXAMPLES=ON -DGRFLIB_BUILD_TESTS=ON
+  - make
