@@ -7,7 +7,10 @@ compiler:
   - clang
 
 script:
+  - export TESTDIR=$(pwd)/grf/testdata
   - rm -rf build/
   - mkdir build && cd build
   - cmake .. -DGRFLIB_BUILD_EXAMPLES=ON -DGRFLIB_BUILD_TESTS=ON
-  - make
+  - cmake --build .
+  - ./grf/grf_test
+  - ./grf/rgz_test
